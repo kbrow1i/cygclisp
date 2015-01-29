@@ -1,0 +1,13 @@
+--- origsrc/clisp-2.48/src/unix.d	2009-06-17 10:26:40.000000000 -0400
++++ src/clisp-2.48/src/unix.d	2015-01-26 12:11:27.111212000 -0500
+@@ -716,7 +716,10 @@ extern int wait2 (PID_T pid); /* see uni
+ /* Interpretation of FILETIME structure: */
+ #ifdef UNIX_CYGWIN32
+   #define WIN32_LEAN_AND_MEAN
++  #pragma push_macro ("Handle")
++  #undef Handle
+   #include <windows.h>
++  #pragma pop_macro ("Handle")
+   #undef WIN32
+   extern long time_t_from_filetime (const FILETIME * ptr);
+   extern void time_t_to_filetime (time_t time_in, FILETIME * out);

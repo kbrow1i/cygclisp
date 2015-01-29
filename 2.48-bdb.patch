@@ -1,0 +1,128 @@
+--- origsrc/clisp-2.48/modules/berkeley-db/bdb.c	2009-06-27 04:13:33.000000000 -0400
++++ src/clisp-2.48/modules/berkeley-db/bdb.c	2015-01-30 10:12:11.415894600 -0500
+@@ -1039,9 +1039,9 @@ static object dbe_get_lk_conflicts (DB_E
+ FLAG_EXTRACTOR(dbe_get_flags_num,DB_ENV*)
+ DEFUNR(BDB:DBE-GET-OPTIONS, dbe &optional what) {
+   object what = STACK_0;
+-  /* dbe may be NULL only for DB_XIDDATASIZE */
++  /* dbe may be NULL only for DB_GID_SIZE */
+   DB_ENV *dbe = (DB_ENV*)bdb_handle(STACK_1,`BDB::DBE`,
+-                                    eq(what,`:DB-XIDDATASIZE`)
++                                    eq(what,`:DB-GID-SIZE`)
+                                     ? BH_NIL_IS_NULL : BH_VALID);
+   what = STACK_0; skipSTACK(2);
+  restart_DBE_GET_OPTIONS:
+@@ -1210,8 +1210,8 @@ DEFUNR(BDB:DBE-GET-OPTIONS, dbe &optiona
+     VALUES1(dbe_get_errfile(dbe));
+   } else if (eq(what,`:MSGFILE`)) {
+     VALUES1(dbe_get_msgfile(dbe));
+-  } else if (eq(what,`:DB-XIDDATASIZE`)) {
+-    VALUES1(fixnum(DB_XIDDATASIZE));
++  } else if (eq(what,`:DB-GID-SIZE`)) {
++    VALUES1(fixnum(DB_GID_SIZE));
+   } else if (eq(what,`:HOME`)) {
+     VALUES1(dbe_get_home_dir(dbe,true));
+   } else if (eq(what,`:OPEN`)) {
+@@ -1235,10 +1235,10 @@ DEFUNR(BDB:DBE-GET-OPTIONS, dbe &optiona
+ 
+ DEFUN(BDB:DB-CREATE, dbe &key XA)
+ { /* create database */
+-  u_int32_t flags = missingp(STACK_0) ? 0 : DB_XA_CREATE;
++  /* u_int32_t flags = missingp(STACK_0) ? 0 : DB_XA_CREATE; */
+   DB_ENV *dbe = (DB_ENV*)bdb_handle(STACK_1,`BDB::DBE`,BH_NIL_IS_NULL);
+   DB *db;
+-  SYSCALL(db_create,(&db,dbe,flags));
++  SYSCALL(db_create,(&db,dbe,0));
+   if (!dbe) {                   /* set error callback */
+     begin_system_call();
+     db->set_errcall(db,&error_callback);
+@@ -2706,13 +2706,13 @@ DEFUN(BDB:TXN-CHECKPOINT, dbe &key KBYTE
+ }
+ 
+ /* return the pointer into the obj (which must be
+-   a (vector (unsigned-byte 8) DB_XIDDATASIZE))
++   a (vector (unsigned-byte 8) DB_GID_SIZE))
+  can trigger GC, the return value is invalidated by GC */
+ static u_int8_t* check_gid (gcv_object_t *obj_) {
+   uintL idx = 0;
+   object data_vector;
+-  *obj_ = check_byte_vector_len(*obj_,DB_XIDDATASIZE);
+-  data_vector = array_displace_check(*obj_,DB_XIDDATASIZE,&idx);
++  *obj_ = check_byte_vector_len(*obj_,DB_GID_SIZE);
++  data_vector = array_displace_check(*obj_,DB_GID_SIZE,&idx);
+   return TheSbvector(data_vector)->data+idx;
+ }
+ 
+@@ -2724,12 +2724,12 @@ DEFUN(BDB:TXN-PREPARE, txn gid)
+   VALUES0; skipSTACK(2);
+ }
+ 
+-/* allocate a (vector (unsigned-byte 8) DB_XIDDATASIZE) for this gid
++/* allocate a (vector (unsigned-byte 8) DB_GID_SIZE) for this gid
+  can trigger GC */
+-static object gid_to_vector (u_int8_t gid[DB_XIDDATASIZE]) {
+-  object vec = allocate_bit_vector(Atype_8Bit,DB_XIDDATASIZE);
++static object gid_to_vector (u_int8_t gid[DB_GID_SIZE]) {
++  object vec = allocate_bit_vector(Atype_8Bit,DB_GID_SIZE);
+   begin_system_call();
+-  memcpy(TheSbvector(vec)->data,gid,DB_XIDDATASIZE);
++  memcpy(TheSbvector(vec)->data,gid,DB_GID_SIZE);
+   end_system_call();
+   return vec;
+ }
+@@ -2742,7 +2742,7 @@ DEFUN(BDB:TXN-RECOVER, dbe &key FIRST :N
+   u_int32_t tx_max;
+   DB_PREPLIST *preplist;
+   int status, ii;
+-  long retnum;
++  u_int32_t retnum;
+   SYSCALL(dbe->get_tx_max,(dbe,&tx_max));
+   preplist = (DB_PREPLIST*)clisp_malloc(tx_max * sizeof(DB_PREPLIST));
+   begin_blocking_system_call();
+@@ -2801,8 +2801,8 @@ DEFUN(BDB:TXN-STAT, dbe &key STAT-CLEAR)
+       pushSTACK(uint32_to_I(txn_active->txnid));
+       pushSTACK(uint32_to_I(txn_active->parentid));
+       pushSTACK(make_lsn(&(txn_active->lsn)));
+-      pushSTACK(uint32_to_I(txn_active->xa_status));
+-      pushSTACK(gid_to_vector(txn_active->xid));
++      pushSTACK(uint32_to_I(txn_active->status));
++      pushSTACK(gid_to_vector(txn_active->gid));
+       funcall(`BDB::MKTXNACTIVE`,5); pushSTACK(value1);
+     }
+     value1 = vectorof(size); pushSTACK(value1);
+--- origsrc/clisp-2.48/modules/berkeley-db/dbi.lisp	2008-12-31 11:26:09.000000000 -0500
++++ src/clisp-2.48/modules/berkeley-db/dbi.lisp	2015-01-30 10:53:59.548351500 -0500
+@@ -252,7 +252,7 @@
+   (region_nowait 0 :type (unsigned-byte 32) :read-only t))
+ 
+ (defstruct (db-txn-active (:constructor mktxnactive
+-                                        (txnid parentid lsn xa_status xid)))
++                                        (txnid parentid lsn status gid)))
+   ;; The transaction ID of the transaction.
+   (txnid 0 :type (unsigned-byte 32) :read-only t)
+   ;; The transaction ID of the parent transaction (or 0, if no parent).
+@@ -261,10 +261,10 @@
+   (lsn nil :type lsn :read-only t)
+   ;; If the transaction is an XA transaction, the status of the
+   ;; transaction, otherwise 0.
+-  (xa_status 0 :type (unsigned-byte 32) :read-only t)
++  (status 0 :type (or keyword (unsigned-byte 32)) :read-only t)
+   ;; If the transaction is an XA transaction, the transaction's XA ID.
+-  (xid nil :type (vector (unsigned-byte 8)
+-                         #,(dbe-get-options nil :DB-XIDDATASIZE))
++  (gid nil :type (vector (unsigned-byte 8)
++                         #,(dbe-get-options nil :DB-GID-SIZE))
+        :read-only t))
+ 
+ (defstruct (db-txn-stat (:constructor mktxnstat
+--- origsrc/clisp-2.48/modules/berkeley-db/test.tst	2008-10-20 22:07:46.000000000 -0400
++++ src/clisp-2.48/modules/berkeley-db/test.tst	2015-01-30 10:29:23.611932800 -0500
+@@ -57,6 +57,8 @@ NIL
+ 
+ (bdb:dbe-get-options *dbe* :errpfx) "zot"
+ 
++(bdb:dbe-get-options *dbe* :db-gid-size) 128
++
+ (bdb:dbe-open *dbe* :home "bdb-home/" :create t
+               :init-mpool t :init-txn t :init-lock t :init-log t)
+ NIL

@@ -1,0 +1,19 @@
+The following packages have been updated in the Cygwin distribution (32-bit only):
+
+* clisp-2.48-4
+* clisp-clx-2.48-4
+* clisp-gdi-2.48-4
+* clisp-gtk2-2.48-4
+
+This is a rebuild of the 2.48-3 packages, patched to build on the current Cygwin and to link against newer versions of various libraries.  The most significant patch changes the HEAPCODES representation of object pointers.  This was necessary because Cygwin now uses high memory for the heap, and this conflicts with the previous HEAPCODES representation.
+
+For further information about clisp-2.48, see the release announcement for clisp-2.48-3:
+
+  https://sourceware.org/ml/cygwin-announce/2009-12/msg00017.html
+
+I am not a clisp user, so I can't properly support it.  I will, however, try to fix any problems caused by my build.  I will also try to port it to 64-bit Cygwin and to update to a more recent clisp release.
+
+If there is someone more knowledgeable about clisp who wants to take over as maintainer, please step up.
+
+Ken Brown
+Cygwin's (temporary?) clisp maintainer

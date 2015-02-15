@@ -69,7 +69,7 @@ usr/share/doc/${PN}/dbus
 SRC_URI="http://prdownloads.sourceforge.net/${PN}/${PN}-${PV}.tar.bz2?download"
 
 PATCH_URI="2.48-gdi.patch"
-PATCH_URI+=" 2.48-reini.patch"
+PATCH_URI+=" 2.48-reini.patch"	# formerly 2.48-3.src.patch
 PATCH_URI+=" 2.48-Handle.patch"
 PATCH_URI+=" 2.48-HEAPCODES.patch"
 PATCH_URI+=" 2.48-uuid.patch"
@@ -78,53 +78,27 @@ PATCH_URI+=" 2.48-bdb.patch"
 
 MAKEOPTS="-j1"
 
-# --with-libpari-prefix=/usr/local --with-module=pari fails at freeall() and init_opts
-# --without-unicode see sf.net bugs
-# --with-module=matlab requires the redistributable matlab dll's in your path. 
-#   maybe this requires an extra clisp-matlab package. Fixed by --with-dynamic-modules
-#   but --with-dynamic-modules is too big and only suitable for on-demand clisp-xxx packages
-# --with-module=fastcgi is linked statically, so (FASTCGI:ACCEPT) works in 
-#   clisp -K full without installed fcgi. Note: Tests with lighttpd dumped core.
-# --with-module=gdi is Dan Stangers experimental gdi interface (native windows gui)
-# --with-dynamic-modules fixed, but not enabled. Too big.
-# --with-jitc=lightning in work. Too slow yet and still in its infancy.
-# --with-threads works, but too slow
-# --with-wildcard added with 2.48-1 
-
 MODULES="rawsock wildcard dirkey bindings/win32 berkeley-db pcre postgresql fastcgi zlib libsvm gdbm"
 EXTRA_MODULES="clx/new-clx gtk2 gdi"
 ALLMODULES="$MODULES $EXTRA_MODULES dbus"
 WITHMODS="--with-modules=$(echo $ALLMODULES|sed -e's, , --with-modules=,g')"
 CYGCONF_ARGS="--fsstnd=redhat --with-ffcall --with-readline --with-gettext \
-        $WITHMODS \
-	--config build --docdir=/usr/share/doc/${PN}"
+        $WITHMODS --docdir=/usr/share/doc/${PN}"
 export CFLAGS
 LDFLAGS="-Wl,--stack,8388608"
 export LDFLAGS
 
-DIFF_EXCLUDES=" -x build -x modules/gdi"
+# DIFF_EXCLUDES=" -x build -x modules/gdi"
 
 # do not strip for (disassemble)
 RESTRICT="debuginfo strip"
 
 src_compile() {
-   cd ${B}
-   cd ..
-   # clisp has its own build subdir under src, link ours to it
-   if [ -d build -a ! -L build ]; then
-	rmdir build
-	mkdir ${S}/build
-	ln -s src/${PN}-${PV}/build
-   fi
-   
    cd ${S}
-   rm -rf autom4te.cache build/config.cache
-   verbose ./configure --srcdir=${S} --prefix=/usr ${CYGCONF_ARGS} || error "configure failed"
+   verbose ./configure --prefix=/usr ${CYGCONF_ARGS} ${B} || error "configure failed"
 
-   # first produce full with the modules without the three seperate EXTRA_MODULES 
-   cd ${S}/build
-   test -l gllib/libgnu.a || ln -sf gllib/.libs/libgnu.a gllib/libgnu.a
-
+   # first produce full without the three seperate EXTRA_MODULES 
+   cd ${B}
    cygmake "MODULES=${ALLMODULES}"
    rm -rf full
    cygmake full "MODULES=${MODULES}"
@@ -177,3 +151,19 @@ src_install() {
    docinto dbus
    dodoc dbus/*.lisp dbus/*.tst
 }
+
+## Reini's comments:
+
+# --with-libpari-prefix=/usr/local --with-module=pari fails at freeall() and init_opts
+# --without-unicode see sf.net bugs
+# --with-module=matlab requires the redistributable matlab dll's in your path. 
+#   maybe this requires an extra clisp-matlab package. Fixed by --with-dynamic-modules
+#   but --with-dynamic-modules is too big and only suitable for on-demand clisp-xxx packages
+# --with-module=fastcgi is linked statically, so (FASTCGI:ACCEPT) works in 
+#   clisp -K full without installed fcgi. Note: Tests with lighttpd dumped core.
+# --with-module=gdi is Dan Stangers experimental gdi interface (native windows gui)
+# --with-dynamic-modules fixed, but not enabled. Too big.
+# --with-jitc=lightning in work. Too slow yet and still in its infancy.
+# --with-threads works, but too slow
+# --with-wildcard added with 2.48-1 
+

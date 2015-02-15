@@ -1,0 +1,38 @@
+--- origsrc/clisp-2.48/src/lispbibl.d	2015-01-31 21:50:28.986433700 -0500
++++ src/clisp-2.48/src/lispbibl.d	2015-02-01 16:06:51.620985200 -0500
+@@ -121,7 +121,7 @@
+   #define PC386 /* IBMPC-compatible with 80386/80486-processor */
+ #endif
+ #ifdef GENERIC_UNIX
+-  #if (defined(unix) && (defined(linux) || defined(__CYGWIN32__) || defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__DragonFly__)) && (defined(i386) || defined(__i386__) || defined(__x86_64__) || defined(__amd64__)))
++  #if (defined(unix) && (defined(linux) || defined(__CYGWIN__) || defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__DragonFly__)) && (defined(i386) || defined(__i386__) || defined(__x86_64__) || defined(__amd64__)))
+     #define PC386
+   #endif
+   #if (defined(sun) && defined(unix) && defined(sparc))
+@@ -291,7 +291,7 @@
+   #ifdef AMIX
+     #define UNIX_AMIX  /* Amiga UNIX */
+   #endif
+-  #ifdef __CYGWIN32__
++  #ifdef __CYGWIN__
+     #define UNIX_CYGWIN32  /* Cygwin32 (UNIXlike on WinNT/Win95) */
+   #endif
+   #ifdef __BEOS__
+@@ -1138,7 +1138,7 @@
+ #else
+   #error No 32 bit integer type? -- Which Integer-type has 32 Bit?
+ #endif
+-#if (long_bitsize==64)
++#if (long_bitsize==64) && !defined(UNIX_CYGWIN32)
+   typedef long           SLONGLONG;
+   typedef unsigned long  ULONGLONG;
+   #ifndef HAVE_LONG_LONG_INT
+@@ -1174,7 +1174,7 @@
+ %%   emit_typedef("int","SLONG");
+ %%   emit_typedef("unsigned int","ULONG");
+ %% #endif
+-%% #if (long_bitsize==64)
++%% #if (long_bitsize==64) && !defined(UNIX_CYGWIN32)
+ %%   emit_typedef("long","SLONGLONG");
+ %%   emit_typedef("unsigned long","ULONGLONG");
+ %% #elif defined(MICROSOFT)

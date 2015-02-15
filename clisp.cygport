@@ -75,6 +75,7 @@ PATCH_URI+=" 2.48-HEAPCODES.patch"
 PATCH_URI+=" 2.48-uuid.patch"
 PATCH_URI+=" 2.48-makemake.patch"
 PATCH_URI+=" 2.48-bdb.patch"
+PATCH_URI+=" 2.48-x86_64.patch"
 
 MAKEOPTS="-j1"
 
@@ -82,8 +83,18 @@ MODULES="rawsock wildcard dirkey bindings/win32 berkeley-db pcre postgresql fast
 EXTRA_MODULES="clx/new-clx gtk2 gdi"
 ALLMODULES="$MODULES $EXTRA_MODULES dbus"
 WITHMODS="--with-modules=$(echo $ALLMODULES|sed -e's, , --with-modules=,g')"
-CYGCONF_ARGS="--fsstnd=redhat --with-ffcall --with-readline --with-gettext \
+
+case "${ARCH}" in
+    i686)
+	CYGCONF_ARGS="--with-ffcall"
+	;;
+    x86_64)
+	CYGCONF_ARGS="--ignore-absence-of-libsigsegv"
+	;;
+esac
+CYGCONF_ARGS+=" --fsstnd=redhat --with-readline --with-gettext \
         $WITHMODS --docdir=/usr/share/doc/${PN}"
+
 export CFLAGS
 LDFLAGS="-Wl,--stack,8388608"
 export LDFLAGS

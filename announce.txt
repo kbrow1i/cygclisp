@@ -5,15 +5,19 @@ The following packages have been updated in the Cygwin distribution (32-bit only
 * clisp-gdi-2.48-4
 * clisp-gtk2-2.48-4
 
-This is a rebuild of the 2.48-3 packages, patched to build on the current Cygwin and to link against newer versions of various libraries.  The most significant patch changes the HEAPCODES representation of object pointers.  This was necessary because Cygwin now uses high memory for the heap, and this conflicts with the previous HEAPCODES representation.
+This is a rebuild of the 2.48-3 packages to remove dependencies on obsolete libraries.  Because of changes in Cygwin's memory layout since 2.48-3 was built, I had to change the way clisp represents object pointers.[1]  There are no other significant changes.
 
 For further information about clisp-2.48, see the release announcement for clisp-2.48-3:
 
   https://sourceware.org/ml/cygwin-announce/2009-12/msg00017.html
 
-I am not a clisp user, so I can't properly support it.  I will, however, try to fix any problems caused by my build.  I will also try to port it to 64-bit Cygwin and to update to a more recent clisp release.
+I have taken over as clisp maintainer because Reini Urban, the previous maintainer, no longer has time to do it.  But I am not a clisp user, so I can't properly support it.  I will, however, try to fix any problems with my build.  I will also try to port clisp to 64-bit Cygwin.
 
-If there is someone more knowledgeable about clisp who wants to take over as maintainer, please step up.
+Unfortunately, I have not been able to build a working version of clisp-2.49 on Cygwin.[2]  If there is someone more knowledgeable about clisp who wants to help with this (and perhaps take over as maintainer), that would be welcome.
 
 Ken Brown
 Cygwin's (temporary?) clisp maintainer
+
+[1] Technically, object pointers now use LINUX_NOEXEC_HEAPCODES instead of STANDARD_HEAPCODES.
+
+[2] It builds, but it doesn't seem to recognize any modules.

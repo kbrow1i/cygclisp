@@ -79,6 +79,16 @@ PATCH_URI+=" 2.48-x86_64.patch"
 
 MAKEOPTS="-j1"
 
+DEPEND="ffcall
+	libfcgi-devel
+	libsigsegv
+	libglade2.0-devel
+	libpcre-devel
+	libpq-devel
+	libdb4.8-devel
+	libgdbm-devel
+"
+
 MODULES="rawsock wildcard dirkey bindings/win32 berkeley-db pcre postgresql fastcgi zlib libsvm gdbm"
 EXTRA_MODULES="clx/new-clx gtk2 gdi"
 ALLMODULES="$MODULES $EXTRA_MODULES dbus"

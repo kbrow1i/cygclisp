@@ -77,15 +77,11 @@ PATCH_URI+=" 2.48-makemake.patch"
 PATCH_URI+=" 2.48-bdb.patch"
 PATCH_URI+=" 2.48-x86_64.patch"
 
-MAKEOPTS="-j1"
+MAKEOPTS="-j1 -k"
 
-DEPEND="ffcall
-	libfcgi-devel
-	libsigsegv
-	libglade2.0-devel
+DEPEND="libglade2.0-devel
 	libpcre-devel
 	libpq-devel
-	libdb4.8-devel
 	libgdbm-devel
 "
 
@@ -97,9 +93,11 @@ WITHMODS="--with-modules=$(echo $ALLMODULES|sed -e's, , --with-modules=,g')"
 case "${ARCH}" in
     i686)
 	CYGCONF_ARGS="--with-ffcall"
+	DEPEND+=" ffcall libdb4.8-devel libfcgi-devel libsigsegv"
 	;;
     x86_64)
 	CYGCONF_ARGS="--ignore-absence-of-libsigsegv"
+	DEPEND+=" libdb-devel"
 	;;
 esac
 CYGCONF_ARGS+=" --fsstnd=redhat --with-readline --with-gettext \

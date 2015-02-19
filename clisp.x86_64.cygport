@@ -1,6 +1,6 @@
 NAME="clisp"
 VERSION=2.48
-RELEASE=5
+RELEASE=4
 HOMEPAGE="http://clisp.cons.org/"
 
 CATEGORY="Devel Interpreters Math Shells"
@@ -19,21 +19,11 @@ packages.  This binary distribution was built with the following
 modules:  rawsock, dirkey, wildcards, bindings/win32, berkeley-db,
 zlib, pcre, fastcgi, postgresql, libsvm, and gdbm."
 
-CONTENTS=" \
---exclude=usr/lib/${PN}-${PV}/full+*
---exclude=usr/share/doc/${PN}/new-clx
---exclude=usr/share/doc/${PN}/gtk2
---exclude=usr/share/doc/${PN}/dbus
---exclude=usr/share/doc/${PN}/gdi
-usr
-"
-
 # SRC_URI="ftp://ftp.gnu.org/pub/gnu/${PN}/release/${PV}/${PN}-${PV}.tar.gz"
 # SRC_URI="ftp://sunsite.unc.edu/pub/Linux/devel/lang/lisp/${PN}-${PV}.tar.bz2"
 # SRC_URI="http://puzzle.dl.sourceforge.net/sourceforge/${PN}/${PN}-${PV}.tar.bz2"
 SRC_URI="http://prdownloads.sourceforge.net/${PN}/${PN}-${PV}.tar.bz2?download"
 
-PATCH_URI="2.48-gdi.patch"
 PATCH_URI+=" 2.48-reini.patch"	# formerly 2.48-3.src.patch
 PATCH_URI+=" 2.48-Handle.patch"
 PATCH_URI+=" 2.48-HEAPCODES.patch"
@@ -41,19 +31,15 @@ PATCH_URI+=" 2.48-uuid.patch"
 PATCH_URI+=" 2.48-makemake.patch"
 PATCH_URI+=" 2.48-bdb.patch"
 PATCH_URI+=" 2.48-x86_64.patch"
-# PATCH_URI+=" no_regexp.patch"
+PATCH_URI+=" no_regexp.patch"
 
 MAKEOPTS+=" -j1"
 
-DEPEND="libglade2.0-devel
-	libpcre-devel
-	libpq-devel
-	libgdbm-devel
-	libdb-devel
+CYGCONF_ARGS="
+	--ignore-absence-of-libsigsegv
+	--without-ffcall
+	--docdir=/usr/share/doc/${PN}
 "
-# MODULES="rawsock dirkey"
-
-CYGCONF_ARGS="--ignore-absence-of-libsigsegv --fsstnd=redhat --with-readline --with-gettext --docdir=/usr/share/doc/${PN}"
 
 export CFLAGS
 LDFLAGS="-Wl,--stack,8388608"
@@ -71,22 +57,6 @@ src_compile() {
 
 src_test() {
   cd ${B}
-  cygmake check
-  cygmake base-mod-check
+  make -k check || true
+  make -k base-mod-check
 }
-
-## Reini's comments:
-
-# --with-libpari-prefix=/usr/local --with-module=pari fails at freeall() and init_opts
-# --without-unicode see sf.net bugs
-# --with-module=matlab requires the redistributable matlab dll's in your path. 
-#   maybe this requires an extra clisp-matlab package. Fixed by --with-dynamic-modules
-#   but --with-dynamic-modules is too big and only suitable for on-demand clisp-xxx packages
-# --with-module=fastcgi is linked statically, so (FASTCGI:ACCEPT) works in 
-#   clisp -K full without installed fcgi. Note: Tests with lighttpd dumped core.
-# --with-module=gdi is Dan Stangers experimental gdi interface (native windows gui)
-# --with-dynamic-modules fixed, but not enabled. Too big.
-# --with-jitc=lightning in work. Too slow yet and still in its infancy.
-# --with-threads works, but too slow
-# --with-wildcard added with 2.48-1 
-

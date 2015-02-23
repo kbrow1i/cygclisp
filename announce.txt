@@ -1,23 +1,20 @@
-The following packages have been updated in the Cygwin distribution (32-bit only):
+The following packages have been updated in the Cygwin distribution:
 
-* clisp-2.48-4
-* clisp-clx-2.48-4
-* clisp-gdi-2.48-4
-* clisp-gtk2-2.48-4
+* clisp-2.49-1
 
-This is a rebuild of the 2.48-3 packages to remove dependencies on obsolete libraries.  Because of changes in Cygwin's memory layout since 2.48-3 was built, I had to change the way clisp represents object pointers.[1]  There are no other significant changes.
+* clisp-clx-2.49-1 (32-bit only)
+* clisp-gdi-2.49-1 (32-bit only)
+* clisp-gtk2-2.49-1 (32-bit only)
 
-For further information about clisp-2.48, see the release announcement for clisp-2.48-3:
+ANSI Common Lisp is a high-level, general-purpose programming language.  GNU CLISP is a Common Lisp implementation by Bruno Haible of Karlsruhe University and Michael Stoll of Munich University, both in Germany.  It mostly supports the Lisp described in the ANSI Common Lisp standard.  GNU CLISP includes an interpreter, a compiler, a debugger, CLOS, MOP, a foreign language interface, sockets, i18n, fast bignums, and more.  An X11 interface is available through CLX, Garnet, CLUE/CLIO.  GNU CLISP runs Maxima, ACL2, and many other Common Lisp packages.
 
-  https://sourceware.org/ml/cygwin-announce/2009-12/msg00017.html
-
-I have taken over as clisp maintainer because Reini Urban, the previous maintainer, no longer has time to do it.  But I am not a clisp user, so I can't properly support it.  I will, however, try to fix any problems with my build.  I will also try to port clisp to 64-bit Cygwin.
-
-Unfortunately, I have not been able to build a working version of clisp-2.49 on Cygwin.[2]  If there is someone more knowledgeable about clisp who wants to help with this (and perhaps take over as maintainer), that would be welcome.
+This is an update to the latest upstream release.  The 32-bit binary was built with the following add-on modules: rawsock, dirkey, wildcards, bindings/win32, berkeley-db, zlib, pcre, fastcgi, postgresql, libsvm, and gdbm.  The 64-bit binary was built with only rawsock and dirkey; moreover, it was built *without* the regexp module, which is normally part of every clisp build.[*]
 
 Ken Brown
-Cygwin's (temporary?) clisp maintainer
+Cygwin's clisp maintainer
 
-[1] Technically, object pointers now use LINUX_NOEXEC_HEAPCODES instead of STANDARD_HEAPCODES.
+[*] The attempted build of regexp fails because of a gcc problem:
 
-[2] It builds, but it doesn't seem to recognize any modules.
+       https://gcc.gnu.org/bugzilla/show_bug.cgi?id=64939
+
+The same sort of error occurs with several other modules.  In addition, some modules require ffcall, which has not yet been ported to 64-bit Cygwin.

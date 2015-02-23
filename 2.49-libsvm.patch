@@ -1,0 +1,54 @@
+--- origsrc/clisp-2.49/modules/libsvm/configure.in	2010-06-30 14:02:55.000000000 -0400
++++ src/clisp-2.49/modules/libsvm/configure.in	2015-02-21 13:15:01.281827100 -0500
+@@ -30,8 +30,9 @@ fi
+ AC_CHECK_FUNCS(svm_check_parameter dnl
+ svm_check_probability_model dnl
+ svm_cross_validation dnl
+-svm_destroy_model dnl
++svm_destroy_model dnl removed in 3.1
+ svm_destroy_param dnl
++svm_free_and_destroy_model dnl since 3.0
+ svm_get_labels dnl
+ svm_get_nr_class dnl
+ svm_get_svm_type dnl
+--- origsrc/clisp-2.49/modules/libsvm/configure	2010-06-30 14:02:55.000000000 -0400
++++ src/clisp-2.49/modules/libsvm/configure	2015-02-21 13:45:08.589199200 -0500
+@@ -4555,7 +4555,7 @@
+ if test "$ac_cv_search_svm_train" = "no"; then
+   as_fn_error "cannot find LibSVM library" "$LINENO" 5
+ fi
+-for ac_func in svm_check_parameter svm_check_probability_model svm_cross_validation svm_destroy_model svm_destroy_param svm_get_labels svm_get_nr_class svm_get_svm_type svm_get_svr_probability svm_load_model svm_predict svm_predict_probability svm_predict_values svm_save_model svm_train svm_set_print_string_function
++for ac_func in svm_check_parameter svm_check_probability_model svm_cross_validation svm_destroy_model svm_destroy_param svm_free_and_destroy_model svm_get_labels svm_get_nr_class svm_get_svm_type svm_get_svr_probability svm_load_model svm_predict svm_predict_probability svm_predict_values svm_save_model svm_train svm_set_print_string_function
+ do :
+   as_ac_var=`$as_echo "ac_cv_func_$ac_func" | $as_tr_sh`
+ ac_fn_c_check_func "$LINENO" "$ac_func" "$as_ac_var"
+--- origsrc/clisp-2.49/modules/libsvm/config.h.in	2015-02-21 13:49:30.788196100 -0500
++++ src/clisp-2.49/modules/libsvm/config.h.in	2015-02-21 13:50:04.493123900 -0500
+@@ -33,6 +33,9 @@
+ /* Define to 1 if you have the `svm_destroy_param' function. */
+ #undef HAVE_SVM_DESTROY_PARAM
+ 
++/* Define to 1 if you have the `svm_free_and_destroy_model' function. */
++#undef HAVE_SVM_FREE_AND_DESTROY_MODEL
++
+ /* Define to 1 if you have the `svm_get_labels' function. */
+ #undef HAVE_SVM_GET_LABELS
+ 
+--- origsrc/clisp-2.49/modules/libsvm/libsvm.lisp	2010-06-30 13:56:36.000000000 -0400
++++ src/clisp-2.49/modules/libsvm/libsvm.lisp	2015-02-21 14:06:28.023378700 -0500
+@@ -28,6 +28,15 @@
+  #else
+   svm_print_string = (void (*) (const char*))&libsvm_print_string;
+  #endif~%")
++(c-lines "
++#if !defined(HAVE_SVM_DESTROY_MODEL)
++# if defined(HAVE_SVM_FREE_AND_DESTROY_MODEL)
++void svm_destroy_model (struct svm_model *model){ svm_free_and_destroy_model(&model); }
++# else
++#  error No svm_destroy_model and no svm_free_and_destroy_model!
++# endif
++#endif
++")
+ 
+ ;;;
+ ;;; types and constants

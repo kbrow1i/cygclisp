@@ -1,7 +1,27 @@
 NAME="clisp"
-VERSION=2.49
+VERSION=2.49+
 RELEASE=1
 HOMEPAGE="http://clisp.cons.org/"
+
+# SRC_URI="ftp://ftp.gnu.org/pub/gnu/${PN}/release/${PV}/${PN}-${PV}.tar.gz"
+# SRC_URI="ftp://sunsite.unc.edu/pub/Linux/devel/lang/lisp/${PN}-${PV}.tar.bz2"
+# SRC_URI="http://puzzle.dl.sourceforge.net/sourceforge/${PN}/${PN}-${PV}.tar.bz2"
+# SRC_URI="http://prdownloads.sourceforge.net/${PN}/${PN}-${PV}.tar.bz2?download"
+
+HG_URI="http://hg.code.sf.net/p/clisp/clisp"
+inherit hg
+
+PATCH_URI+=" 2.48-HEAPCODES.patch"
+PATCH_URI+=" 2.48-Handle.patch"
+PATCH_URI+=" 2.48-x86_64.patch"
+PATCH_URI+=" 2.49+-declare_ioctl.patch"
+PATCH_URI+=" 2.49+-libsvm.patch"
+PATCH_URI+=" 2.49+-socket_tst.patch"
+PATCH_URI+=" 2.49-gdbm_tst.patch"
+PATCH_URI+=" 2.49-gtk2_lib_name.patch"
+PATCH_URI+=" 2.49-makemake.patch"
+PATCH_URI+=" 2.49-no_symlink_dll.patch"
+PATCH_URI+=" 2.49-uuid.patch"
 
 clisp_CATEGORY="Devel Interpreters Math Shells"
 clisp_SUMMARY="An ANSI Common Lisp implementation"
@@ -25,55 +45,32 @@ then
     clisp_gtk2_CATEGORY="Interpreters"
 
     clisp_clx_SUMMARY="The new-clx module linkset for clisp"
-    clisp_gdi_SUMMARY="The GDI module linkset for clisp"
+    clisp_gdi_SUMMARY="The GDI module linkset for clisp; no longer supported"
     clisp_gtk2_SUMMARY="The GTK2 + dbus module linkset for clisp"
 
     clisp_clx_DESCRIPTION="This is the linkset full+new-clx for X.Org."
-    clisp_gdi_DESCRIPTION="This is the linkset full+gdi with the experimental GDI module (native
-Win32 GDI)."
+    clisp_gdi_DESCRIPTION="The GDI module linkset for clisp; no longer supported"
     clisp_gtk2_DESCRIPTION="This is the linkset full+gtk2 for X.Org, with dbus included."
 
     clisp_clx_REQUIRES="clisp"
-    clisp_gdi_REQUIRES="clisp"
     clisp_gtk2_REQUIRES="clisp"
 
     clisp_CONTENTS="
 --exclude=usr/lib/${PN}-${PV}/full+*
 --exclude=usr/share/doc/${PN}/new-clx
 --exclude=usr/share/doc/${PN}/gtk2
---exclude=usr/share/doc/${PN}/gdi
 usr
 "
+    # cygport will create an empty clisp-gdi package.
+
     clisp_clx_CONTENTS="
 usr/lib/${PN}-${PV}/full+new-clx
 usr/share/doc/${PN}/new-clx
-"
-    clisp_gdi_CONTENTS="
-usr/lib/${PN}-${PV}/full+gdi
-usr/share/doc/${PN}/gdi
 "
     clisp_gtk2_CONTENTS="
 usr/lib/${PN}-${PV}/full+gtk2
 "
 fi
-
-# SRC_URI="ftp://ftp.gnu.org/pub/gnu/${PN}/release/${PV}/${PN}-${PV}.tar.gz"
-# SRC_URI="ftp://sunsite.unc.edu/pub/Linux/devel/lang/lisp/${PN}-${PV}.tar.bz2"
-# SRC_URI="http://puzzle.dl.sourceforge.net/sourceforge/${PN}/${PN}-${PV}.tar.bz2"
-SRC_URI="http://prdownloads.sourceforge.net/${PN}/${PN}-${PV}.tar.bz2?download"
-
-PATCH_URI="2.48-gdi.patch"
-PATCH_URI+=" 2.48-HEAPCODES.patch"
-PATCH_URI+=" 2.48-Handle.patch"
-PATCH_URI+=" 2.48-x86_64.patch"
-PATCH_URI+=" 2.49-gdbm_tst.patch"
-PATCH_URI+=" 2.49-gtk2_lib_name.patch"
-PATCH_URI+=" 2.49-implicit_declaration.patch"
-PATCH_URI+=" 2.49-libsvm.patch"
-PATCH_URI+=" 2.49-makemake.patch"
-PATCH_URI+=" 2.49-no_symlink_dll.patch"
-PATCH_URI+=" 2.49-socket_tst.patch"
-PATCH_URI+=" 2.49-uuid.patch"
 
 MAKEOPTS+=" -j1"
 
@@ -90,8 +87,8 @@ case "${ARCH}" in
 		libsigsegv
 		libsvm-devel
 "
-	MODULES="rawsock wildcard dirkey bindings/win32 berkeley-db pcre postgresql fastcgi zlib gdbm libsvm"
-	EXTRA_MODULES="clx/new-clx gtk2 gdi"
+	MODULES="rawsock dirkey bindings/win32 berkeley-db pcre postgresql fastcgi zlib gdbm libsvm"
+	EXTRA_MODULES="clx/new-clx gtk2"
 	ALLMODULES="${MODULES} ${EXTRA_MODULES} dbus"
 	WITHMODS="--with-modules=$(echo ${ALLMODULES} | sed -e's, , --with-modules=,g')"
 	CYGCONF_ARGS="${WITHMODS} --docdir=/usr/share/doc/${PN} --without-dynamic-modules"
@@ -118,8 +115,6 @@ src_compile() {
     verbose ./configure --prefix=/usr ${CYGCONF_ARGS} ${B} \
 	     || error "configure failed"
     cd ${B}
-    mkdir -p gdi
-    lndir ${S}/modules/gdi gdi
     cygmake "MODULES=${ALLMODULES}"
     if [ "${ARCH}" = i686 ]
     then
@@ -130,7 +125,7 @@ src_compile() {
 	do
     	    fixed_m=`echo $m | sed s,clx/,,`
     	    if [ "$m" = "gtk2" ]; then m="gtk2 dbus"; fi
-    	    CLISP_LINKKIT=. ./clisp-link add full "full+${fixed_m}" $m \
+	    ./clisp-link add full "full+${fixed_m}" $m \
 		|| error "full+${fixed_m} failed"
 	done
     fi

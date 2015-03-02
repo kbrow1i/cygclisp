@@ -1,21 +1,11 @@
---- origsrc/clisp-2.49/modules/syscalls/calls.c	2010-06-18 16:05:54.000000000 -0400
-+++ src/clisp-2.49/modules/syscalls/calls.c	2015-02-20 11:40:02.126056700 -0500
-@@ -3322,6 +3322,7 @@ DEFUN(POSIX::DUPLICATE-HANDLE, old &opti
- 
- #if defined(WIN32_NATIVE) || defined(UNIX_CYGWIN32)
- #include <shlobj.h>
-+#include <shlguid.h>
- 
- /* also exists in w32shell.c
-    redefining here for compilation with cygwin
---- origsrc/clisp-2.49/modules/syscalls/configure	2010-06-24 14:09:40.000000000 -0400
-+++ src/clisp-2.49/modules/syscalls/configure	2015-02-20 11:36:11.284853400 -0500
-@@ -8879,7 +8879,7 @@ fi
+--- origsrc/clisp/modules/syscalls/configure	2015-02-23 14:46:53.000000000 -0500
++++ src/clisp/modules/syscalls/configure	2015-02-23 15:06:56.149469600 -0500
+@@ -4798,7 +4798,7 @@ fi
  done
  
  if test "$ac_cv_header_shlobj_h" = yes ; then
--   LIBS=${LIBS}' -luser32 -lole32 -loleaut32 -luuid';
-+   LIBS=${LIBS}' -luser32 -lole32 -loleaut32 -L/usr/lib/w32api -luuid';
+-   LIBS=${LIBS}' -luser32 -lole32 -loleaut32 -luuid -lversion';
++   LIBS=${LIBS}' -luser32 -lole32 -loleaut32 -L/usr/lib/w32api -luuid -lversion';
  fi
- # The cast to long int works around a bug in the HP C Compiler
- # version HP92453-01 B.11.11.23709.GP, which incorrectly rejects
+ # Check whether --enable-largefile was given.
+ if test "${enable_largefile+set}" = set; then :

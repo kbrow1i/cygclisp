@@ -1,0 +1,20 @@
+# HG changeset patch
+# User Ken Brown <kbrown@cornell.edu>
+# Date 1425569108 18000
+#      Thu Mar 05 10:25:08 2015 -0500
+# Node ID c90aa4bb8c75be0942f2196dbbc477de56deede1
+# Parent  c89e1966ad491619b813bde15de5f1cb0418933a
+* modules/libsvm/libsvm.lisp (svm_destroy_model): Fix prototype
+
+diff -r c89e1966ad49 -r c90aa4bb8c75 modules/libsvm/libsvm.lisp
+--- a/modules/libsvm/libsvm.lisp	Thu Mar 05 10:23:05 2015 -0500
++++ b/modules/libsvm/libsvm.lisp	Thu Mar 05 10:25:08 2015 -0500
+@@ -31,7 +31,7 @@
+ (c-lines "
+ #if !defined(HAVE_SVM_DESTROY_MODEL)
+ # if defined(HAVE_SVM_FREE_AND_DESTROY_MODEL)
+-void svm_destroy_model (svm_model *model){ svm_free_and_destroy_model(&model); }
++void svm_destroy_model (struct svm_model *model){ svm_free_and_destroy_model(&model); }
+ # else
+ #  error No svm_destroy_model and no svm_free_and_destroy_model!
+ # endif

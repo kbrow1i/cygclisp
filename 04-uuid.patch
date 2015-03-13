@@ -1,0 +1,25 @@
+# HG changeset patch
+# User Ken Brown <kbrown@cornell.edu>
+# Date 1425566518 18000
+#      Thu Mar 05 09:41:58 2015 -0500
+# Node ID 27a4d1cc9090b02c8f388714b83fd8184cad6ca7
+# Parent  df85b49c7315d4c365f32455f4fdeee2893c48b4
+* modules/syscalls/configure.in [cygwin]: Ensure that `-luuid' finds the w32 library
+
+diff -r df85b49c7315 -r 27a4d1cc9090 modules/syscalls/configure.in
+--- a/modules/syscalls/configure.in	Wed Mar 04 22:05:35 2015 -0500
++++ b/modules/syscalls/configure.in	Thu Mar 05 09:41:58 2015 -0500
+@@ -18,7 +18,12 @@
+ pwd.h sys/unistd.h syslog.h signal.h grp.h crypt.h utmpx.h shlobj.h dnl
+ sys/statvfs.h sys/statfs.h sys/param.h ftw.h)
+ if test "$ac_cv_header_shlobj_h" = yes ; then
+-   LIBS=${LIBS}' -luser32 -lole32 -loleaut32 -luuid -lversion';
++   case "$ac_cv_build" in
++   *-cygwin)
++     LIBS=${LIBS}' -luser32 -lole32 -loleaut32 -L/usr/lib/w32api -luuid -lversion';;
++   *)
++     LIBS=${LIBS}' -luser32 -lole32 -loleaut32 -luuid -lversion';;
++   esac
+ fi
+ AC_SYS_LARGEFILE    dnl ensure 64 bit size_t for AC_CHECK_SIZEOF below
+ AC_CHECK_SIZEOF(off_t)

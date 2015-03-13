@@ -1,14 +1,18 @@
 The following packages have been updated in the Cygwin distribution:
 
-* clisp-2.49-1
+* clisp-2.49-2.20150312hg15611
 
-* clisp-clx-2.49-1 (32-bit only)
-* clisp-gdi-2.49-1 (32-bit only)
-* clisp-gtk2-2.49-1 (32-bit only)
+* clisp-clx-2.49-2.20150312hg15611 (32-bit only)
+* clisp-gdi-2.49-2.20150312hg15611 (32-bit only)
+* clisp-gtk2-2.49-2.20150312hg15611 (32-bit only)
 
 ANSI Common Lisp is a high-level, general-purpose programming language.  GNU CLISP is a Common Lisp implementation by Bruno Haible of Karlsruhe University and Michael Stoll of Munich University, both in Germany.  It mostly supports the Lisp described in the ANSI Common Lisp standard.  GNU CLISP includes an interpreter, a compiler, a debugger, CLOS, MOP, a foreign language interface, sockets, i18n, fast bignums, and more.  An X11 interface is available through CLX, Garnet, CLUE/CLIO.  GNU CLISP runs Maxima, ACL2, and many other Common Lisp packages.
 
-This is an update to the latest upstream release.  The 32-bit binary was built with the following add-on modules: rawsock, dirkey, wildcards, bindings/win32, berkeley-db, zlib, pcre, fastcgi, postgresql, libsvm, and gdbm.  The 64-bit binary was built with only rawsock and dirkey; moreover, it was built *without* the regexp module, which is normally part of every clisp build.[*]
+This release was built from the tip of the upstream Mercurial repository, patched so that dynamic loading of modules now works.  As a result, there is no longer a "full" linkset (or "full+clx" or "full+gtk2").  These are not needed since modules are now loaded on demand.  A sample clisp session is included below to illustrate this.
+
+The 32-bit clisp includes the following add-on modules: rawsock, dirkey, bindings/win32, berkeley-db, zlib, pcre, fastcgi, postgresql, libsvm, and gdbm.  clisp-clx provides the clx/new-clx module, and clisp-gtk2 provides the gtk2 and dbus modules.  clisp-gdi is now an empty package, because the gdi module no longer compiles, and it appears to be unmaintained upstream (https://code.google.com/p/clisp-gdi/).
+
+The only add-on modules in the 64-bit package are rawsock and dirkey; moreover, the regexp module, which is normally part of every clisp build, is not included.[*]
 
 Ken Brown
 Cygwin's clisp maintainer
@@ -18,3 +22,59 @@ Cygwin's clisp maintainer
        https://gcc.gnu.org/bugzilla/show_bug.cgi?id=64939
 
 The same sort of error occurs with several other modules.  In addition, some modules require ffcall, which has not yet been ported to 64-bit Cygwin.
+
+----------------------------
+
+Sample session:
+
+$ clisp
+  i i i i i i i       ooooo    o        ooooooo   ooooo   ooooo
+  I I I I I I I      8     8   8           8     8     o  8    8
+  I  \ `+' /  I      8         8           8     8        8    8
+   \  `-+-'  /       8         8           8      ooooo   8oooo
+    `-__|__-'        8         8           8           8  8
+        |            8     o   8           8     o     8  8
+  ------+------       ooooo    8oooooo  ooo8ooo   ooooo   8
+
+Welcome to GNU CLISP 2.49+ (2010-07-17) <http://clisp.org/>
+
+Copyright (c) Bruno Haible, Michael Stoll 1992, 1993
+Copyright (c) Bruno Haible, Marcus Daniels 
+Copyright (c) Bruno Haible, Pierpaolo Bernardi, Sam Steingold 1998
+Copyright (c) Bruno Haible, Sam Steingold 1999-2000
+Copyright (c) Sam Steingold, Bruno Haible 2001-2010
+
+Type :h and hit Enter for context help.
+
+[1]> *modules*
+("readline" "regexp" "wildcard" "syscalls" "i18n")
+[2]> (require "bdb")
+;; Loading file /usr/lib/clisp-2.49+/dynmod/bdb.lisp ...
+;;  Loading file /usr/lib/clisp-2.49+/berkeley-db/preload.lisp ...
+;;  Loaded file /usr/lib/clisp-2.49+/berkeley-db/preload.lisp
+;;  Loading module bdb from /usr/lib/clisp-2.49+/dynmod/lib-bdb.dll
+;;  Loaded module bdb from /usr/lib/clisp-2.49+/dynmod/lib-bdb.dll
+;;  Loading file /usr/lib/clisp-2.49+/berkeley-db/dbi.fas ...
+;;  Loaded file /usr/lib/clisp-2.49+/berkeley-db/dbi.fas
+;; Loaded file /usr/lib/clisp-2.49+/dynmod/bdb.lisp
+#P"/usr/lib/clisp-2.49+/dynmod/bdb.lisp"
+[3]> *modules*
+("bdb" "readline" "regexp" "wildcard" "syscalls" "i18n")
+[4]> (require "clx")
+;; Loading file /usr/lib/clisp-2.49+/dynmod/clx.lisp ...
+;;  Loading file /usr/lib/clisp-2.49+/clx/new-clx/clx-preload.lisp ...
+;;  Loaded file /usr/lib/clisp-2.49+/clx/new-clx/clx-preload.lisp
+;;  Loading module clx from /usr/lib/clisp-2.49+/dynmod/lib-clx.dll
+;;  Loaded module clx from /usr/lib/clisp-2.49+/dynmod/lib-clx.dll
+;;  Loading file /usr/lib/clisp-2.49+/clx/new-clx/clx.fas ...
+;;  Loaded file /usr/lib/clisp-2.49+/clx/new-clx/clx.fas
+;;  Loading file /usr/lib/clisp-2.49+/clx/new-clx/image.fas ...
+;;  Loaded file /usr/lib/clisp-2.49+/clx/new-clx/image.fas
+;;  Loading file /usr/lib/clisp-2.49+/clx/new-clx/resource.fas ...
+;;  Loaded file /usr/lib/clisp-2.49+/clx/new-clx/resource.fas
+;; Loaded file /usr/lib/clisp-2.49+/dynmod/clx.lisp
+#P"/usr/lib/clisp-2.49+/dynmod/clx.lisp"
+[5]> *modules*
+("clx" "bdb" "readline" "regexp" "wildcard" "syscalls" "i18n")
+[6]> (quit)
+Bye.

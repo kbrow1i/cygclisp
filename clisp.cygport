@@ -1,7 +1,8 @@
 NAME="clisp"
-VERSION=2.49+
-RELEASE=1
+VERSION=2.49
+RELEASE=2.20150312hg15611
 HOMEPAGE="http://clisp.cons.org/"
+ORIG_PV=2.49+
 
 # SRC_URI="ftp://ftp.gnu.org/pub/gnu/${PN}/release/${PV}/${PN}-${PV}.tar.gz"
 # SRC_URI="ftp://sunsite.unc.edu/pub/Linux/devel/lang/lisp/${PN}-${PV}.tar.bz2"
@@ -9,19 +10,40 @@ HOMEPAGE="http://clisp.cons.org/"
 # SRC_URI="http://prdownloads.sourceforge.net/${PN}/${PN}-${PV}.tar.bz2?download"
 
 HG_URI="http://hg.code.sf.net/p/clisp/clisp"
+# HG_REV=15611 as of 2015-03-12
 inherit hg
 
-PATCH_URI+=" 2.48-HEAPCODES.patch"
-PATCH_URI+=" 2.48-Handle.patch"
-PATCH_URI+=" 2.48-x86_64.patch"
-PATCH_URI+=" 2.49+-declare_ioctl.patch"
-PATCH_URI+=" 2.49+-libsvm.patch"
+# The following have been sent upstream but not applied yet.
+PATCH_URI+=" http://sourceforge.net/p/clisp/patches/36/attachment/01-Handle.patch"
+PATCH_URI+=" http://sourceforge.net/p/clisp/patches/37/attachment/02-declare_ioctl.patch"
+PATCH_URI+=" http://sourceforge.net/p/clisp/patches/38/attachment/03-LINUX_NOEXEC_HEAPCODES.patch"
+PATCH_URI+=" http://sourceforge.net/p/clisp/patches/39/attachment/04-uuid.patch"
+PATCH_URI+=" http://sourceforge.net/p/clisp/patches/_discuss/thread/3427bc0d/b018/attachment/clisp-libsvm.patch"
+PATCH_URI+=" http://sourceforge.net/p/clisp/patches/40/attachment/06-gtk_server_cfg.patch"
+PATCH_URI+=" http://sourceforge.net/p/clisp/patches/41/attachment/07-signal_m4.patch"
+PATCH_URI+=" http://sourceforge.net/p/clisp/patches/42/attachment/08-no___CYGWIN32__.patch"
+PATCH_URI+=" http://sourceforge.net/p/clisp/patches/43/attachment/09-x86_x4_ULONGLONG.patch"
+
+# The following are ready to be sent upstream after testing.
+PATCH_URI+=" no_symlink_dll_cygwin.patch"
+PATCH_URI+=" build_lisp_dll_cygwin.patch"
+PATCH_URI+=" fix_dynamic_loading_cygwin.patch"
+
+# The following aren't ready for upstream.
+PATCH_URI+=" 10-update_src_configure.patch"
+PATCH_URI+=" 11-update_modules_syscalls_configure.patch"
+PATCH_URI+=" 12-no_regexp_x86_64_cygwin.patch"
 PATCH_URI+=" 2.49+-socket_tst.patch"
 PATCH_URI+=" 2.49-gdbm_tst.patch"
-PATCH_URI+=" 2.49-gtk2_lib_name.patch"
-PATCH_URI+=" 2.49-makemake.patch"
-PATCH_URI+=" 2.49-no_symlink_dll.patch"
-PATCH_URI+=" 2.49-uuid.patch"
+PATCH_URI+=" 2.49+-gtk2_lib_name.patch"
+PATCH_URI+=" 2.49-no_cygwin_README.patch"
+PATCH_URI+=" 20150312_failed_tests_x86_64.patch"
+PATCH_URI+=" 20150312_failed_tests_x86_64_dynamic.patch"
+PATCH_URI+=" 20150312_failed_tests_i686.patch"
+# I seem to get 3 berkeley-db failures, with or without patch
+# PATCH_URI+=" 20150312-berkeley_db_failing_tests.patch"
+
+# TODO: Clean up tests.
 
 clisp_CATEGORY="Devel Interpreters Math Shells"
 clisp_SUMMARY="An ANSI Common Lisp implementation"
@@ -44,31 +66,38 @@ then
     clisp_gdi_CATEGORY="Interpreters"
     clisp_gtk2_CATEGORY="Interpreters"
 
-    clisp_clx_SUMMARY="The new-clx module linkset for clisp"
-    clisp_gdi_SUMMARY="The GDI module linkset for clisp; no longer supported"
-    clisp_gtk2_SUMMARY="The GTK2 + dbus module linkset for clisp"
+    clisp_clx_SUMMARY="The new-clx module for clisp"
+    clisp_gdi_SUMMARY="The GDI module for clisp; no longer supported"
+    clisp_gtk2_SUMMARY="The GTK2 + dbus module for clisp"
 
-    clisp_clx_DESCRIPTION="This is the linkset full+new-clx for X.Org."
-    clisp_gdi_DESCRIPTION="The GDI module linkset for clisp; no longer supported"
-    clisp_gtk2_DESCRIPTION="This is the linkset full+gtk2 for X.Org, with dbus included."
+    clisp_clx_DESCRIPTION="This is the new-clx clisp module for X.Org."
+    clisp_gdi_DESCRIPTION="This is the GDI clisp module; no longer supported"
+    clisp_gtk2_DESCRIPTION="This is the gtk2 clisp module for X.Org, with dbus included."
 
     clisp_clx_REQUIRES="clisp"
     clisp_gtk2_REQUIRES="clisp"
 
     clisp_CONTENTS="
---exclude=usr/lib/${PN}-${PV}/full+*
---exclude=usr/share/doc/${PN}/new-clx
---exclude=usr/share/doc/${PN}/gtk2
+--exclude=usr/lib/${PN}-${ORIG_PV}/dbus
+--exclude=usr/lib/${PN}-${ORIG_PV}/clx
+--exclude=usr/lib/${PN}-${ORIG_PV}/dynmod/*clx*
+--exclude=usr/lib/${PN}-${ORIG_PV}/dynmod/*dbus*
+--exclude=usr/lib/${PN}-${ORIG_PV}/dynmod/*gtk*
+--exclude=usr/lib/${PN}-${ORIG_PV}/gtk2
 usr
 "
+
     # cygport will create an empty clisp-gdi package.
 
     clisp_clx_CONTENTS="
-usr/lib/${PN}-${PV}/full+new-clx
-usr/share/doc/${PN}/new-clx
+usr/lib/${PN}-${ORIG_PV}/clx
+usr/lib/${PN}-${ORIG_PV}/dynmod/*clx*
 "
     clisp_gtk2_CONTENTS="
-usr/lib/${PN}-${PV}/full+gtk2
+usr/lib/${PN}-${ORIG_PV}/gtk2
+usr/lib/${PN}-${ORIG_PV}/dbus
+usr/lib/${PN}-${ORIG_PV}/dynmod/*dbus*
+usr/lib/${PN}-${ORIG_PV}/dynmod/*gtk*
 "
 fi
 
@@ -87,24 +116,23 @@ case "${ARCH}" in
 		libsigsegv
 		libsvm-devel
 "
-	MODULES="rawsock dirkey bindings/win32 berkeley-db pcre postgresql fastcgi zlib gdbm libsvm"
-	EXTRA_MODULES="clx/new-clx gtk2"
-	ALLMODULES="${MODULES} ${EXTRA_MODULES} dbus"
-	WITHMODS="--with-modules=$(echo ${ALLMODULES} | sed -e's, , --with-modules=,g')"
-	CYGCONF_ARGS="${WITHMODS} --docdir=/usr/share/doc/${PN} --without-dynamic-modules"
+	MODULES="rawsock dirkey bindings/win32 berkeley-db pcre postgresql fastcgi zlib gdbm libsvm clx/new-clx gtk2 dbus"
+	# Many libsvm tests hang, and the test suite claims that win32
+	# can't be found.
+	CHECK_MODULES="rawsock dirkey berkeley-db pcre postgresql fastcgi zlib gdbm clx/new-clx gtk2 dbus"
+	WITHMODS="--with-modules=$(echo ${MODULES} | sed -e's, , --with-modules=,g')"
+	CYGCONF_ARGS="${WITHMODS} --docdir=/usr/share/doc/${PN}"
 	;;
     x86_64)
-	PATCH_URI+=" no_regexp.patch"
 	MODULES="rawsock dirkey"
-	EXTRA_MODULES=
-	ALLMODULES="${MODULES} ${EXTRA_MODULES}"
-	WITHMODS="--with-modules=$(echo ${ALLMODULES} | sed -e's, , --with-modules=,g')"
-	CYGCONF_ARGS="${WITHMODS} --docdir=/usr/share/doc/${PN} --without-dynamic-modules --ignore-absence-of-libsigsegv --without-ffcall"
+	CHECK_MODULES=${MODULES}
+	WITHMODS="--with-modules=$(echo ${MODULES} | sed -e's, , --with-modules=,g')"
+	CYGCONF_ARGS="${WITHMODS} --docdir=/usr/share/doc/${PN} --ignore-absence-of-libsigsegv --without-ffcall"
 	;;
 esac
 	
 export CFLAGS
-LDFLAGS="-Wl,--stack,8388608"
+LDFLAGS="-Wl,--stack,0x800000"
 export LDFLAGS
 
 # do not strip for (disassemble)
@@ -115,77 +143,31 @@ src_compile() {
     verbose ./configure --prefix=/usr ${CYGCONF_ARGS} ${B} \
 	     || error "configure failed"
     cd ${B}
-    cygmake "MODULES=${ALLMODULES}"
-    if [ "${ARCH}" = i686 ]
-    then
-	rm -rf full
-	cygmake full "MODULES=${MODULES}"
-	# now use the linkkit for the three separate modules
-	for m in ${EXTRA_MODULES}
-	do
-    	    fixed_m=`echo $m | sed s,clx/,,`
-    	    if [ "$m" = "gtk2" ]; then m="gtk2 dbus"; fi
-	    ./clisp-link add full "full+${fixed_m}" $m \
-		|| error "full+${fixed_m} failed"
-	done
-    fi
+    cygmake MODULES="${MODULES}"
 }
 
 src_install() {
     cd ${B}
-    sed -i -e "s|^MODULES = $|MODULES = ${MODULES}|" Makefile
-    cyginstall
-    if [ "${ARCH}" = i686 ]
-    then
-	for m in ${EXTRA_MODULES}
-	do
-	    fixed_m=`echo $m | sed s,clx/,,`
-	    docinto ${fixed_m}
-	    pushd ${S}/modules/$m
-	    dodoc README ChangeLog TODO COPYRIGHT
-	    popd
-	    insdir=/usr/lib/${PN}-${PV}/full+${fixed_m}
-	    insinto ${insdir}
-	    doins full+${fixed_m}/*
-	    chmod 0755 ${D}${insdir}/lisp.exe
-	    # resolve .o as links; force relative links
-	    pushd ${D}${insdir}
-	    for o in *.o *.a *.dvi; do
-		if [ -e "../full/$o" ]; then
-		    ln -fs ../full/$o $o
-		fi
-	    done
-	    popd
-	done
-    fi
+    cyginstall MODULES="${MODULES}"
 }
+
+# May have to manually do "cd ${B}; make -k full-mod-check
+# MODULES=..." to get all modules tested.  clx test has to be run
+# under X and gives 6 errors out of 193.
 
 src_test() {
     cd ${B}
     make -k check || true
-    make -k mod-check "MODULES=${MODULES}" || true
-    for m in ${EXTRA_MODULES}
-    do
-	fixed_m=`echo $m | sed s,clx/,,`
-	./clisp -K full+${fixed_m} -E UTF-8 -Epathname 1:1 -Emisc 1:1 \
-		-norc -C -i tests/tests -x \
-		"(ext:exit (plusp (or (run-some-tests :dirlist '($m)) 0)))" \
-	    || true
-    done
+    make -k mod-check MODULES="${CHECK_MODULES}"
 }
 
 ## Reini's comments:
 
 # --with-libpari-prefix=/usr/local --with-module=pari fails at freeall() and init_opts
-# --without-unicode see sf.net bugs
 # --with-module=matlab requires the redistributable matlab dll's in your path. 
 #   maybe this requires an extra clisp-matlab package. Fixed by --with-dynamic-modules
-#   but --with-dynamic-modules is too big and only suitable for on-demand clisp-xxx packages
 # --with-module=fastcgi is linked statically, so (FASTCGI:ACCEPT) works in 
 #   clisp -K full without installed fcgi. Note: Tests with lighttpd dumped core.
 # --with-module=gdi is Dan Stangers experimental gdi interface (native windows gui)
-# --with-dynamic-modules fixed, but not enabled. Too big.
 # --with-jitc=lightning in work. Too slow yet and still in its infancy.
 # --with-threads works, but too slow
-# --with-wildcard added with 2.48-1 
-

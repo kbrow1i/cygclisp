@@ -1,0 +1,25 @@
+# HG changeset patch
+# User Ken Brown <kbrown@cornell.edu>
+# Date 1425510694 18000
+#      Wed Mar 04 18:11:34 2015 -0500
+# Node ID 9a43f7dac04375804add3f16955308f0a44cc9b8
+# Parent  5c63938ef493e06b089fd6868293f39496413b78
+* src/unix.d [UNIX_CYGWIN32]: Work around namespace pollution in w32 headers
+
+"Handle" is used in a w32 prototype, interfering with our definition
+of it as a macro.
+
+diff -r 5c63938ef493 -r 9a43f7dac043 src/unix.d
+--- a/src/unix.d	Wed Oct 22 12:04:12 2014 -0400
++++ b/src/unix.d	Wed Mar 04 18:11:34 2015 -0500
+@@ -623,7 +623,10 @@
+ /* Interpretation of FILETIME structure: */
+ #ifdef UNIX_CYGWIN32
+   #define WIN32_LEAN_AND_MEAN
++  #pragma push_macro ("Handle")
++  #undef Handle
+   #include <windows.h>
++  #pragma pop_macro ("Handle")
+   #undef WIN32
+   extern long time_t_from_filetime (const FILETIME * ptr);
+   extern void time_t_to_filetime (time_t time_in, FILETIME * out);

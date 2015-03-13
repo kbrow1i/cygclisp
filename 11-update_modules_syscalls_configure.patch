@@ -1,0 +1,25 @@
+# HG changeset patch
+# User Ken Brown <kbrown@cornell.edu>
+# Date 1425652906 18000
+#      Fri Mar 06 09:41:46 2015 -0500
+# Node ID 3ee52afa4969411b4b7d61b2232c9274bcd1bce4
+# Parent  45b9d318b7c64782ca1d7cc88ac7ba50a9c97e30
+* modules/syscalls/configure: Update
+
+diff -r 45b9d318b7c6 -r 3ee52afa4969 modules/syscalls/configure
+--- a/modules/syscalls/configure	Fri Mar 06 09:33:48 2015 -0500
++++ b/modules/syscalls/configure	Fri Mar 06 09:41:46 2015 -0500
+@@ -4798,7 +4798,12 @@
+ done
+ 
+ if test "$ac_cv_header_shlobj_h" = yes ; then
+-   LIBS=${LIBS}' -luser32 -lole32 -loleaut32 -luuid -lversion';
++   case "$ac_cv_build" in
++   *-cygwin)
++     LIBS=${LIBS}' -luser32 -lole32 -loleaut32 -L/usr/lib/w32api -luuid -lversion';;
++   *)
++     LIBS=${LIBS}' -luser32 -lole32 -loleaut32 -luuid -lversion';;
++   esac
+ fi
+ # Check whether --enable-largefile was given.
+ if test "${enable_largefile+set}" = set; then :

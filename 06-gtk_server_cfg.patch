@@ -1,0 +1,31 @@
+# HG changeset patch
+# User Ken Brown <kbrown@cornell.edu>
+# Date 1425570529 18000
+#      Thu Mar 05 10:48:49 2015 -0500
+# Node ID 3e0a47cc519e131f658131387a5dd118cacff85d
+# Parent  c90aa4bb8c75be0942f2196dbbc477de56deede1
+* modules/gtk2/gtk-server.cfg: Add Cygwin libs (commented out)
+
+diff -r c90aa4bb8c75 -r 3e0a47cc519e modules/gtk2/gtk-server.cfg
+--- a/modules/gtk2/gtk-server.cfg	Thu Mar 05 10:25:08 2015 -0500
++++ b/modules/gtk2/gtk-server.cfg	Thu Mar 05 10:48:49 2015 -0500
+@@ -64,6 +64,19 @@
+ #
+ #---------------------------------------------------------------------------
+ #
++# Cygwin
++#
++# GTK2 backend:
++# GTK_LIB_NAME = cyggtk-x11-2.0-0.dll
++# GDK_LIB_NAME = cyggdk-x11-2.0-0.dll
++# GLIB_LIB_NAME = cygglib-2.0-0.dll
++# GOBJECT_LIB_NAME = cyggobject-2.0-0.dll
++# ATK_LIB_NAME = cygatk-1.0-0.dll
++# PANGO_LIB_NAME = cygpango-1.0-0.dll
++# PIXBUF_LIB_NAME = cyggdk_pixbuf_xlib-2.0-0.dll
++#
++#---------------------------------------------------------------------------
++#
+ # Directory where to put the logfile if logging is enabled.
+ # In Windows, also use a slash forward (/) to separate directory's!
+ #

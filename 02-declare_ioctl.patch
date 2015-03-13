@@ -1,13 +1,22 @@
---- origsrc/clisp/src/unix.d	2015-02-23 15:10:57.383267400 -0500
-+++ src/clisp/src/unix.d	2015-02-23 16:37:05.242852000 -0500
-@@ -433,6 +433,25 @@ extern_C int isatty (int fd); /* TTYNAME
+# HG changeset patch
+# User Ken Brown <kbrown@cornell.edu>
+# Date 1425524080 18000
+#      Wed Mar 04 21:54:40 2015 -0500
+# Node ID 34be157e71d92a16c20bb601828cee54156ad2a5
+# Parent  9a43f7dac04375804add3f16955308f0a44cc9b8
+Restore declaration of ioctl
+
+* src/unix.d [HAVE_IOCTL]: Restore declaration of ioctl, which was
+removed as part of revision 15470, leading to an
+implicit-function-declaration warning in src/unixaux.d.
+
+diff -r 9a43f7dac043 -r 34be157e71d9 src/unix.d
+--- a/src/unix.d	Wed Mar 04 18:11:34 2015 -0500
++++ b/src/unix.d	Wed Mar 04 21:54:40 2015 -0500
+@@ -433,6 +433,18 @@
  #elif defined(NEED_SYS_IOCTL_H)
    #include <sys/ioctl.h>
  #endif
-+
-+/* The following #ifdef block was removed as part of rev 15470; but
-+then ioctl isn't declared on Cygwin, leading to an
-+implicit-function-declaration error in unixaux.d */
 +
 +#ifdef HAVE_IOCTL
 +  #ifdef IOCTL_DOTS
@@ -18,9 +27,6 @@
 +    /* 3rd argument is always cast to type IOCTL_ARGUMENT_T (usually CADDR_T): */
 +    #define ioctl(fd,request,arg)  (ioctl)(fd,request,(IOCTL_ARGUMENT_T)(arg))
 +  #endif
-+#endif
-+#ifndef HAVE_SELECT
-+/* fcntl() will be used, declared in <fcntl.h> */
 +#endif
 +
  /* START_NO_BLOCK() & END_NO_BLOCK() should appear in pairs

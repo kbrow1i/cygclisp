@@ -1,0 +1,71 @@
+# HG changeset patch
+# User Ken Brown <kbrown@cornell.edu>
+# Date 1425652428 18000
+#      Fri Mar 06 09:33:48 2015 -0500
+# Node ID 45b9d318b7c64782ca1d7cc88ac7ba50a9c97e30
+# Parent  92c3ad94be9ada0750bd1ea96afc8101e0917af6
+* src/configure: Update
+
+diff -r 92c3ad94be9a -r 45b9d318b7c6 src/configure
+--- a/src/configure	Thu Mar 05 12:30:28 2015 -0500
++++ b/src/configure	Fri Mar 06 09:33:48 2015 -0500
+@@ -34298,11 +34298,6 @@
+ #include <unistd.h>
+ #endif
+ #include <signal.h>
+-#ifdef __CYGWIN32__
+-/* On Cygwin32 version 18, this test would hang (SIGALRM not being signalled).
+- * Let it fail instead. */
+-#error "better fail than hang"
+-#endif
+ volatile int gotsig=0;
+ void sigalrm_handler() { gotsig=1; }
+ int got_sig () { return gotsig; }
+@@ -34352,11 +34347,6 @@
+ #include <unistd.h>
+ #endif
+ #include <signal.h>
+-#ifdef __CYGWIN32__
+-/* On Cygwin32 version 18, this test would hang (SIGALRM not being signalled).
+- * Let it fail instead. */
+-#error "better fail than hang"
+-#endif
+ volatile int gotsig=0;
+ volatile int wasblocked=0;
+ typedef void (*signal_handler_t) (int);
+@@ -34417,11 +34407,6 @@
+ #include <unistd.h>
+ #endif
+ #include <signal.h>
+-#ifdef __CYGWIN32__
+-/* On Cygwin32 version 18, this test would hang (SIGALRM not being signalled).
+- * Let it fail instead. */
+-#error "better fail than hang"
+-#endif
+ volatile int gotsig=0;
+ volatile int somewereblocked=0;
+ typedef void (*signal_handler_t) (int);
+@@ -34497,11 +34482,6 @@
+ #include <unistd.h>
+ #endif
+ #include <signal.h>
+-#ifdef __CYGWIN32__
+-/* On Cygwin32 version 18, this test would hang (SIGALRM not being signalled).
+- * Let it fail instead. */
+-#error "better fail than hang"
+-#endif
+ typedef void (*signal_handler_t) (int);
+ signal_handler_t mysignal (int sig, signal_handler_t handler)
+ { struct sigaction old_sa;
+@@ -34561,11 +34541,6 @@
+ #include <unistd.h>
+ #endif
+ #include <signal.h>
+-#ifdef __CYGWIN32__
+-/* On Cygwin32 version 18, this test would hang (SIGALRM not being signalled).
+- * Let it fail instead. */
+-#error "better fail than hang"
+-#endif
+ typedef void (*signal_handler_t) (int);
+ signal_handler_t mysignal (int sig, signal_handler_t handler)
+ { struct sigaction old_sa;

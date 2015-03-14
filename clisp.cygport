@@ -45,7 +45,7 @@ PATCH_URI+=" 20150312-path_failing_tests.patch"
 PATCH_URI+=" 20150312-rawsock_failing_tests.patch"
 PATCH_URI+=" 20150312-socket_failing_tests.patch"
 PATCH_URI+=" 20150312-syscalls_failing_tests.patch"
-# PATCH_URI+=" unix_line_endings_cygwin.patch"
+PATCH_URI+=" unix_line_endings_cygwin.patch"
 
 clisp_CATEGORY="Devel Interpreters Math Shells"
 clisp_SUMMARY="An ANSI Common Lisp implementation"

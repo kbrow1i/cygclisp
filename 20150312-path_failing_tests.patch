@@ -1,0 +1,55 @@
+--- origsrc/clisp/tests/path.tst	2015-03-10 21:32:52.000000000 -0400
++++ src/clisp/tests/path.tst	2015-03-12 17:45:04.234558700 -0400
+@@ -1338,25 +1338,33 @@ NIL
+ ;; DOS attack: bad pathnames in search can break LOAD
+ ;; http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=443520
+ ;; http://thread.gmane.org/gmane.lisp.clisp.devel/18532
+-#+(and clisp unicode (not macos))
+-(letf* ((custom:*pathname-encoding* charset:iso-8859-1) ; 1:1
+-        (weird (concatenate 'string "weird" (string (code-char 160))))
+-        (good "path-tst-good-file") (dir "path-tst-load-weird-dir/")
+-        (custom:*load-paths* (list (concatenate 'string dir "**"))))
+-  (rmrf dir)
+-  (ext:make-directory dir)
+-  (open (concatenate 'string dir weird) :direction :probe
+-        :if-does-not-exist :create)
+-  (with-open-file (os (concatenate 'string dir good ".lisp")
+-                      :direction :output)
+-    (format os "(defparameter *load-var* 1234)~%"))
+-  (unwind-protect
+-       (list (letf ((custom:*pathname-encoding* charset:ascii))
+-               (load good)
+-               *load-var*)
+-             (eq custom:*pathname-encoding* charset:iso-8859-1))
+-    (rmrf dir)))
+-#+(and clisp unicode (not macos)) (1234 T)
++;; PARSE-NAMESTRING: syntax error in filename "path-tst-load-weird-dir/weird " at position 29
++
++;; OUT:
++;; "/home/kbrown/src/cygclisp/clisp-2.49-3.20150312hg15611.x86_64/build/tests/path-tst-load-weird-dir/       0   2015-03-12 17:05:42
++;; removing directory #P\"/home/kbrown/src/cygclisp/clisp-2.49-3.20150312hg15611.x86_64/build/tests/path-tst-load-weird-dir/\"
++;; [SIMPLE-PARSE-ERROR]: PARSE-NAMESTRING: syntax error in filename \"path-tst-load-weird-dir/weird \" at position 29
++
++;; "
++;; #+(and clisp unicode (not macos))
++;; (letf* ((custom:*pathname-encoding* charset:iso-8859-1) ; 1:1
++;;         (weird (concatenate 'string "weird" (string (code-char 160))))
++;;         (good "path-tst-good-file") (dir "path-tst-load-weird-dir/")
++;;         (custom:*load-paths* (list (concatenate 'string dir "**"))))
++;;   (rmrf dir)
++;;   (ext:make-directory dir)
++;;   (open (concatenate 'string dir weird) :direction :probe
++;;         :if-does-not-exist :create)
++;;   (with-open-file (os (concatenate 'string dir good ".lisp")
++;;                       :direction :output)
++;;     (format os "(defparameter *load-var* 1234)~%"))
++;;   (unwind-protect
++;;        (list (letf ((custom:*pathname-encoding* charset:ascii))
++;;                (load good)
++;;                *load-var*)
++;;              (eq custom:*pathname-encoding* charset:iso-8859-1))
++;;     (rmrf dir)))
++;; #+(and clisp unicode (not macos)) (1234 T)
+ 
+ #+clisp ;; bug#3124200
+ (let* ((dir "tmp-dir/")

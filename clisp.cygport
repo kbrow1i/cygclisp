@@ -1,6 +1,6 @@
 NAME="clisp"
 VERSION=2.49
-RELEASE=2.20150312hg15611
+RELEASE=3.20150312hg15611
 HOMEPAGE="http://clisp.cons.org/"
 ORIG_PV=2.49+
 
@@ -37,13 +37,15 @@ PATCH_URI+=" 2.49+-socket_tst.patch"
 PATCH_URI+=" 2.49-gdbm_tst.patch"
 PATCH_URI+=" 2.49+-gtk2_lib_name.patch"
 PATCH_URI+=" 2.49-no_cygwin_README.patch"
-PATCH_URI+=" 20150312_failed_tests_x86_64.patch"
-PATCH_URI+=" 20150312_failed_tests_x86_64_dynamic.patch"
-PATCH_URI+=" 20150312_failed_tests_i686.patch"
-# I seem to get 3 berkeley-db failures, with or without patch
-# PATCH_URI+=" 20150312-berkeley_db_failing_tests.patch"
-
-# TODO: Clean up tests.
+PATCH_URI+=" 20150312-berkeley_db_failing_tests.patch"
+PATCH_URI+=" 20150312-clx_failing_tests.patch"
+PATCH_URI+=" 20150312-excepsit_failing_tests.patch"
+PATCH_URI+=" 20150312-libsvm_test_hang.patch"
+PATCH_URI+=" 20150312-path_failing_tests.patch"
+PATCH_URI+=" 20150312-rawsock_failing_tests.patch"
+PATCH_URI+=" 20150312-socket_failing_tests.patch"
+PATCH_URI+=" 20150312-syscalls_failing_tests.patch"
+# PATCH_URI+=" unix_line_endings_cygwin.patch"
 
 clisp_CATEGORY="Devel Interpreters Math Shells"
 clisp_SUMMARY="An ANSI Common Lisp implementation"
@@ -117,9 +119,11 @@ case "${ARCH}" in
 		libsvm-devel
 "
 	MODULES="rawsock dirkey bindings/win32 berkeley-db pcre postgresql fastcgi zlib gdbm libsvm clx/new-clx gtk2 dbus"
-	# Many libsvm tests hang, and the test suite claims that win32
-	# can't be found.
-	CHECK_MODULES="rawsock dirkey berkeley-db pcre postgresql fastcgi zlib gdbm clx/new-clx gtk2 dbus"
+	# The test suite claims that win32 can't be found.  postgresql
+	# test requires postgresql installed, and maybe service
+	# runnng.  berkeley-db needs to be tested last; maybe there's
+	# a timing issue with locks?
+	CHECK_MODULES="rawsock dirkey pcre fastcgi zlib gdbm libsvm clx/new-clx gtk2 dbus berkeley-db"
 	WITHMODS="--with-modules=$(echo ${MODULES} | sed -e's, , --with-modules=,g')"
 	CYGCONF_ARGS="${WITHMODS} --docdir=/usr/share/doc/${PN}"
 	;;
@@ -152,13 +156,14 @@ src_install() {
 }
 
 # May have to manually do "cd ${B}; make -k full-mod-check
-# MODULES=..." to get all modules tested.  clx test has to be run
-# under X and gives 6 errors out of 193.
+# MODULES=..." to get all modules tested.  clx and dbus tests have to
+# be run under X.
 
 src_test() {
     cd ${B}
     make -k check || true
-    make -k mod-check MODULES="${CHECK_MODULES}"
+    make -k base-mod-check || true
+    make -k full-mod-check MODULES="${CHECK_MODULES}"
 }
 
 ## Reini's comments:

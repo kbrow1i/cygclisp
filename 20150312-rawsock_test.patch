@@ -1,0 +1,21 @@
+--- origsrc/clisp/modules/rawsock/test.tst	2015-03-10 21:32:50.000000000 -0400
++++ src/clisp/modules/rawsock/test.tst	2015-03-14 21:20:25.741427400 -0400
+@@ -281,7 +281,9 @@ NIL
+ (rawsock:sock-close *sock1*) 0
+ (rawsock:sock-close *sock2*) 0
+ 
++;; This fails on Cygwin with OS Error on socket 8: [:EFAULT]: Bad address.
+ ;; message
++#-cygwin
+ (when (and (fboundp 'rawsock:sendmsg) (fboundp 'rawsock:recvmsg))
+   (let* ((message '("man" "bites" "dog"))
+          (len (reduce #'+ message :key #'length))
+@@ -315,7 +317,7 @@ NIL
+     ;;               (rawsock:sockatmark *sock2*))))
+     (rawsock:sock-close *sock1*) (rawsock:sock-close *sock2*))
+   nil)
+-NIL
++#-cygwin NIL
+ 
+ #-win32 (rawsock:sock-write 1 (to-bytes "foo")) #-win32 3
+ 

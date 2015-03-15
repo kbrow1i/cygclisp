@@ -1,0 +1,15 @@
+--- origsrc/clisp/tests/excepsit.tst	2015-03-10 21:32:52.000000000 -0400
++++ src/clisp/tests/excepsit.tst	2015-03-14 17:05:21.466513200 -0400
+@@ -796,9 +796,10 @@ type-error
+ (oddp 3.5)
+ type-error
+ 
+-#+(and UNIX (not BeOS))
++;; On Cygwin /etc/passwd might not exist.
++#+(and UNIX (not BeOS) (not cygwin))
+ (progn (open "/etc/passwd" :direction :input :if-exists :error) (/ 0))
+-#+(and UNIX (not BeOS))
++#+(and UNIX (not BeOS) (not cygwin))
+ division-by-zero
+ 
+ #+UNIX

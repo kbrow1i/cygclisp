@@ -33,18 +33,17 @@ PATCH_URI+=" fix_dynamic_loading_cygwin.patch"
 PATCH_URI+=" 10-update_src_configure.patch"
 PATCH_URI+=" 11-update_modules_syscalls_configure.patch"
 PATCH_URI+=" 12-no_regexp_x86_64_cygwin.patch"
-PATCH_URI+=" 2.49+-socket_tst.patch"
-PATCH_URI+=" 2.49-gdbm_tst.patch"
 PATCH_URI+=" 2.49+-gtk2_lib_name.patch"
 PATCH_URI+=" 2.49-no_cygwin_README.patch"
-PATCH_URI+=" 20150312-berkeley_db_failing_tests.patch"
-PATCH_URI+=" 20150312-clx_failing_tests.patch"
-PATCH_URI+=" 20150312-excepsit_failing_tests.patch"
-PATCH_URI+=" 20150312-libsvm_test_hang.patch"
-PATCH_URI+=" 20150312-path_failing_tests.patch"
-PATCH_URI+=" 20150312-rawsock_failing_tests.patch"
-PATCH_URI+=" 20150312-socket_failing_tests.patch"
-PATCH_URI+=" 20150312-syscalls_failing_tests.patch"
+PATCH_URI+=" 20150312-berkeley_db_test.patch"
+PATCH_URI+=" 20150312-clx_test.patch"
+PATCH_URI+=" 20150312-excepsit_test.patch"
+PATCH_URI+=" 20150312-gdbm_test.patch"
+PATCH_URI+=" 20150312-libsvm_test.patch"
+PATCH_URI+=" 20150312-path_test.patch"
+PATCH_URI+=" 20150312-rawsock_test.patch"
+PATCH_URI+=" 20150312-socket_test.patch"
+PATCH_URI+=" 20150312-syscalls_test.patch"
 PATCH_URI+=" unix_line_endings_cygwin.patch"
 
 clisp_CATEGORY="Devel Interpreters Math Shells"
@@ -108,13 +107,14 @@ MAKEOPTS+=" -j1"
 case "${ARCH}" in
     i686)
 	DEPEND="
-		libglade2.0-devel
-		libpcre-devel
-		libpq-devel
-		libgdbm-devel
 		ffcall
 		libdb4.8-devel
 		libfcgi-devel
+		libgcrypt-devel
+		libgdbm-devel
+		libglade2.0-devel
+		libpcre-devel
+		libpq-devel
 		libsigsegv
 		libsvm-devel
 "
@@ -155,14 +155,12 @@ src_install() {
     cyginstall MODULES="${MODULES}"
 }
 
-# May have to manually do "cd ${B}; make -k full-mod-check
-# MODULES=..." to get all modules tested.  clx and dbus tests have to
-# be run under X.
+# clx and dbus tests have to be run under X.
 
 src_test() {
     cd ${B}
-    make -k check || true
-    make -k base-mod-check || true
+    make -k check
+    make -k base-mod-check
     make -k full-mod-check MODULES="${CHECK_MODULES}"
 }
 

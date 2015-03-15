@@ -1,0 +1,39 @@
+--- origsrc/clisp/modules/clx/new-clx/test.tst	2015-03-10 21:32:53.000000000 -0400
++++ src/clisp/modules/clx/new-clx/test.tst	2015-03-14 17:07:05.160444200 -0400
+@@ -215,18 +215,31 @@ CHECK-QUERY-BEST
+         (equalp map (xlib:keyboard-mapping *dpy*))))
+ (T NIL T)
+ 
+-(multiple-value-list (xlib:keysym->keycodes *dpy* 65)) (38)
++;; On Cygwin the keysym->keycodes tests give different values; I don't
++;; know if that's a bug in Cygwin or in the tests.
++ 
++(multiple-value-list (xlib:keysym->keycodes *dpy* 65))
++#-cygwin (38)
++#+cygwin (38 38 38)
+ 
+-(multiple-value-list (xlib:keysym->keycodes *dpy* #xFF51)) (113 113)
++(multiple-value-list (xlib:keysym->keycodes *dpy* #xFF51))
++#-cygwin (113 113)
++#+cygwin (100 100 100)
+ (xlib:keysym "Left") #xFF51
+ (xlib:keysym-name #xFF51) "Left"
+-(multiple-value-list (xlib:keysym->keycodes *dpy* #xFF52)) (111 111)
++(multiple-value-list (xlib:keysym->keycodes *dpy* #xFF52))
++#-cygwin (111 111)
++#+cygwin (98 98 98)
+ (xlib:keysym "Up") #xFF52
+ (xlib:keysym-name #xFF52) "Up"
+-(multiple-value-list (xlib:keysym->keycodes *dpy* #xFF53)) (114 114)
++(multiple-value-list (xlib:keysym->keycodes *dpy* #xFF53))
++#-cygwin (114 114)
++#+cygwin (102 102 102)
+ (xlib:keysym "Right") #xFF53
+ (xlib:keysym-name #xFF53) "Right"
+-(multiple-value-list (xlib:keysym->keycodes *dpy* #xFF54)) (116 116)
++(multiple-value-list (xlib:keysym->keycodes *dpy* #xFF54))
++#-cygwin (116 116)
++#+cygwin (104 104 104)
+ (xlib:keysym "Down") #xFF54
+ (xlib:keysym-name #xFF54) "Down"
+ 

@@ -1,6 +1,6 @@
 NAME="clisp"
 VERSION=2.49
-RELEASE=4.20150312hg15611
+RELEASE=5.20150312hg15611
 HOMEPAGE="http://clisp.cons.org/"
 ORIG_PV=2.49+
 
@@ -40,9 +40,10 @@ PATCH_URI+=" 20150312-gdbm_test.patch"
 PATCH_URI+=" 20150312-libsvm_test.patch"
 PATCH_URI+=" 20150312-path_test.patch"
 PATCH_URI+=" 20150312-rawsock_test.patch"
+PATCH_URI+=" 20150312-postgresql_test.patch"
 PATCH_URI+=" 20150312-socket_test.patch"
 PATCH_URI+=" 20150312-syscalls_test.patch"
-# PATCH_URI+=" unix_line_endings_cygwin.patch"
+PATCH_URI+=" unix_line_endings_cygwin.patch"
 
 clisp_CATEGORY="Devel Interpreters Math Shells"
 clisp_SUMMARY="An ANSI Common Lisp implementation"
@@ -115,13 +116,14 @@ case "${ARCH}" in
 		libpq-devel
 		libsigsegv
 		libsvm-devel
+		postgresql-devel
 "
 	MODULES="rawsock dirkey bindings/win32 berkeley-db pcre postgresql fastcgi zlib gdbm libsvm clx/new-clx gtk2 dbus"
 	# The test suite claims that win32 can't be found.  postgresql
 	# test requires postgresql installed, and maybe service
 	# runnng.  berkeley-db needs to be tested last; maybe there's
 	# a timing issue with locks?
-	CHECK_MODULES="rawsock dirkey pcre fastcgi zlib gdbm libsvm clx/new-clx gtk2 dbus berkeley-db"
+	CHECK_MODULES="rawsock dirkey pcre postgresql fastcgi zlib gdbm libsvm clx/new-clx gtk2 dbus berkeley-db"
 	WITHMODS="--with-modules=$(echo ${MODULES} | sed -e's, , --with-modules=,g')"
 	CYGCONF_ARGS="${WITHMODS} --docdir=/usr/share/doc/${PN}"
 	;;

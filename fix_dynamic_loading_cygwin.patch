@@ -1,89 +1,82 @@
 # HG changeset patch
 # User Ken Brown <kbrown@cornell.edu>
-# Date 1426182319 14400
-#      Thu Mar 12 13:45:19 2015 -0400
-# Node ID 9ff524a1f78ab7fcf5cb25ca55efbf27c0adac61
-# Parent  32d6c4cfcef539fd96cfdd7971050d3848f31048
-Make dynamic loading work on Cygwin
+# Date 1426692861 14400
+#      Wed Mar 18 11:34:21 2015 -0400
+# Node ID 513664dc75ee845837ac2b76898f0e9c285e670d
+# Parent  0c1c2f8a54a2a829667ac96f3b33fe38a2a9a5e8
+Fix dynamic loading on Cygwin
 
-* src/lispbibl.d [DYNAMIC_MODULES]: Treat Cygwin the same as non-win32
-systems.
-* src/clisp-link.in:
-* src/makemake.in: Fix dynamic loading on Cygwin.
+* src/genclisph.d [UNIX_CYGWIN32]: Fix syntax error in lisp.def.
+* src/makemake.in (archive_cmds): Fix definition on Cygwin.
+(lisp.def): Add "hostent_to_lisp" to lisp.def on Cygwin.
+(clisp-link): Use absolute path to lisp.def.
 
-diff -r e306f0da362f src/clisp-link.in
---- a/src/clisp-link.in Fri Mar 13 07:57:45 2015 -0400
-+++ b/src/clisp-link.in Fri Mar 13 11:50:24 2015 -0400
-@@ -597,6 +597,9 @@
-       # in the build directory, avoid "cp: `...' and `...' are the same file"
-       if [ "${absolute_moduledir}" != "${absdestdir}/$moduledir" ]; then
-         make clisp-module-distrib LN=${INSTALL_DATA-cp} distribdir="${absdestdir}/$moduledir"
-+       if [ "${HSYSOS}" = cygwin ] ; then
-+          ${INSTALL_DATA-cp} *.dll.a ${absdestdir}/${moduledir}
-+       fi
-         mkdir -p ${absdestdir}/${DYNMOD};
-         for f in ${DYNDIR_FILES}; do
-           cp ${f} ${absdestdir}/${DYNMOD}/
-diff -r 32d6c4cfcef5 -r 9ff524a1f78a src/lispbibl.d
---- a/src/lispbibl.d	Thu Mar 12 13:23:02 2015 -0400
-+++ b/src/lispbibl.d	Thu Mar 12 13:45:19 2015 -0400
-@@ -559,7 +559,7 @@
-    Info: resolving _mv_space by linking to __imp__mv_space (auto-import)
-    on woe32. */
- #if defined(DYNAMIC_MODULES)
--  #if defined(WIN32_NATIVE) || defined(UNIX_CYGWIN32)
-+  #if defined(WIN32_NATIVE)
-     #define DYNAMIC_TABLES 1
-     #define modexp  __declspec(dllexport)
-     #define modimp  __declspec(dllimport)
-@@ -568,6 +568,9 @@
-     #define DYNAMIC_TABLES 0
-     #define modexp
-     #define modimp  extern
-+    #if defined(UNIX_CYGWIN32)
-+      #define EXECUTABLE_NAME "lisp.exe"
-+    #endif
-   #endif
- #else
-   #define DYNAMIC_TABLES 0
-diff -r 32d6c4cfcef5 -r 9ff524a1f78a src/makemake.in
---- a/src/makemake.in	Thu Mar 12 13:23:02 2015 -0400
-+++ b/src/makemake.in	Thu Mar 12 13:45:19 2015 -0400
-@@ -1376,13 +1376,24 @@
+diff -r 0c1c2f8a54a2 -r 513664dc75ee src/genclisph.d
+--- a/src/genclisph.d	Thu Mar 05 15:04:35 2015 -0500
++++ b/src/genclisph.d	Wed Mar 18 11:34:21 2015 -0400
+@@ -333,7 +333,13 @@
+     def_f = fopen(argv[2],"w");
+     if (def_f == NULL) { perror(argv[2]); exit(1); }
+     fprintf(stderr,"writing DLL export file %s\n",argv[2]);
++    /* Having both EXPORTS and IMPORTS generates a syntax error on
++       Cygwin.  All we need is imports, for building dynamic modules. */
++   #ifdef UNIX_CYGWIN32
++    fprintf(def_f,"IMPORTS\n");
++   #else
+     fprintf(def_f,"EXPORTS\nIMPORTS\n");
++   #endif
+   }
+  #endif
+ 
+diff -r 0c1c2f8a54a2 -r 513664dc75ee src/makemake.in
+--- a/src/makemake.in	Thu Mar 05 15:04:35 2015 -0500
++++ b/src/makemake.in	Wed Mar 18 11:34:21 2015 -0400
+@@ -1371,7 +1371,11 @@
    # Support for dynamic loading.
    eval "`./libtool --tag=CC --config | grep '^pic_flag='`"
    eval XCC_PICFLAG=\"${pic_flag}\"
 -  eval "`./libtool --tag=CC --config | grep '^archive_cmds='`"
-+  if [ ${HSYSOS} != cygwin ]; then
++  if [ "$HSYSOS" != cygwin ]; then
 +    eval "`./libtool --tag=CC --config | grep '^archive_cmds='`"
 +  else
-+    archive_cmds='$CC -shared $libobjs $deplibs $compiler_flags ${absolute_sourcedir}/lisp.dll.a -o $output_objdir/$soname ${wl}--enable-auto-import ${wl}--out-implib=${dll}.a'
++    archive_cmds='$CC -shared $libobjs $deplibs $compiler_flags -o $output_objdir/$soname'
 +  fi
    # http://article.gmane.org/gmane.comp.shells.bash.bugs:17158
    CC_set=${CC+set}
    CC_save=$CC
--  CC='${CC}' libobjs='$libs' deplibs='${CLFLAGS}' compiler_flags='${CFLAGS}' \
--    soname='$dll' lib='$lib' output_objdir='$dyndir' \
--    eval XCC_CREATESHARED=\"${archive_cmds}\"
-+  if [ "${HSYSOS}" != cygwin ] ; then
-+    CC='${CC}' libobjs='$libs' deplibs='${CLFLAGS}' compiler_flags='${CFLAGS}' \
-+      soname='$dll' lib='$lib' output_objdir='$dyndir' \
-+      eval XCC_CREATESHARED=\"${archive_cmds}\"
-+  else
-+    CC='${CC}' libobjs='$libs' deplibs='${CLFLAGS}' compiler_flags='${CFLAGS}' \
-+      soname='$dll' lib='$lib' output_objdir='$dyndir' wl='-Wl,' \
-+      absolute_sourcedir='$absolute_sourcedir' dll='$dll' \
-+      eval XCC_CREATESHARED=\"${archive_cmds}\"
-+  fi
-   if test "$CC_set" = set
-   then CC=$CC_save
-   else unset CC
-@@ -2604,7 +2615,7 @@
-   echotab "\$(RANLIB) libnoreadline.a"
+@@ -3081,14 +3085,20 @@
    echol
  fi
--if [ ${SHREXT} = .dll -a "${with_dynamic_modules}" != no ]; then
-+if [ ${SHREXT} = .dll -a "${with_dynamic_modules}" != no -a "${HSYSOS}" != cygwin ]; then
-   # win32 (SHREXT=.dll) requires all accessed libraries when linking a DLL.
-   # i.e. when creating a dynamic module dll, we must give lisp.dll to the
-   # linker, and when creating lisp.dll, we must give $(LIBS) to it.
+ 
+-
+ echol "clisp.h clisp-test.c${CLISP_DEF} : genclisph.o config.h ${PARAMS_H}"
+ echotab_to_HEXE "\$(CC) \$(CFLAGS) \$(CLFLAGS)" "genclisph.o" "genclisph"
+ echotab "(echo '#ifndef _CLISP_H' ; echo '#define _CLISP_H' ; echo; echo '/* ==== config.h ==== */' ; cat config.h ) > clisp.h"
+ for parf in ${PARAMS_H}; do
+   echotab "(echo; echo '/* '${parf}' */' ; grep '^#' ${parf} ) >> clisp.h"
+ done
+-echotab "(echo; echo '/* genclisph */' ; ${HERE}genclisph clisp-test.c ${CLISP_DEF}; echo ; echo '#endif /* _CLISP_H */') >> clisp.h"
++# clx depends on the symbol "hostent_to_lisp", which is defined in the
++# syscalls module and therefore doesn't get put into lisp.def on
++# Cygwin.  So we just force it.
++if [ "${HSYSOS}" != cygwin ]; then
++  echotab "(echo; echo '/* genclisph */' ; ${HERE}genclisph clisp-test.c ${CLISP_DEF}; echo ; echo '#endif /* _CLISP_H */') >> clisp.h"
++else
++    echotab "(echo; echo '/* genclisph */' ; ${HERE}genclisph clisp-test.c ${CLISP_DEF}; echo -e \"\tlisp.exe.hostent_to_lisp\" >> ${CLISP_DEF} ; echo ; echo '#endif /* _CLISP_H */') >> clisp.h"
++fi
+ echotab_to_HEXE "\$(CC) \$(CPPFLAGS) \$(CFLAGS) \$(CLFLAGS) -DUSE_CLISP_H=1 -DCOMPILE_STANDALONE" "clisp-test.c" "clisp-test-clisp"
+ echotab_to_HEXE "\$(CC) \$(CPPFLAGS) \$(CFLAGS) \$(CLFLAGS) -DUSE_CLISP_H=0 -DCOMPILE_STANDALONE" "clisp-test.c" "clisp-test-lispbibl"
+ echotab "${HERE}clisp-test-clisp > clisp-test-clisp.out"
+@@ -3160,8 +3170,12 @@
+   echotab "sed -e 's%@with_dynamic_modules@%${with_dynamic_modules}%' \\"
+   echotab "    -e 's%@createsharedlib@%$XCC_CREATESHARED_%' \\"
+   echotab "    -e 's%@LEXE@%${LEXE}%' -e 's%@SHREXT@%${SHREXT}%' \\"
++  # On Cygwin, "-L$sourcedir$" is not enough for the linker to find
++  # lisp.def.  So just give the absolute path to lisp.def.
+   if test -z "${CLISP_DEF}"; then
+     echotab "    -e 's%@CLISP_DEF@%%' \\"
++  elif [ "${HSYSOS}" = cygwin ]; then
++    echotab "    -e 's%@CLISP_DEF@%\$\$absolute_sourcedir/lisp.def%' \\"
+   else
+     echotab "    -e 's%@CLISP_DEF@%-L\$\$sourcedir${CLISP_DEF}%' \\"
+   fi

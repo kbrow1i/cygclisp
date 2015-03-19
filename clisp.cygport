@@ -1,6 +1,6 @@
 NAME="clisp"
 VERSION=2.49
-RELEASE=3.20150312hg15611
+RELEASE=4.20150312hg15611
 HOMEPAGE="http://clisp.cons.org/"
 ORIG_PV=2.49+
 
@@ -24,9 +24,7 @@ PATCH_URI+=" http://sourceforge.net/p/clisp/patches/41/attachment/07-signal_m4.p
 PATCH_URI+=" http://sourceforge.net/p/clisp/patches/42/attachment/08-no___CYGWIN32__.patch"
 PATCH_URI+=" http://sourceforge.net/p/clisp/patches/43/attachment/09-x86_x4_ULONGLONG.patch"
 
-# The following are ready to be sent upstream after testing.
-PATCH_URI+=" no_symlink_dll_cygwin.patch"
-PATCH_URI+=" build_lisp_dll_cygwin.patch"
+# The following is ready to be sent upstream after testing.
 PATCH_URI+=" fix_dynamic_loading_cygwin.patch"
 
 # The following aren't ready for upstream.
@@ -44,7 +42,7 @@ PATCH_URI+=" 20150312-path_test.patch"
 PATCH_URI+=" 20150312-rawsock_test.patch"
 PATCH_URI+=" 20150312-socket_test.patch"
 PATCH_URI+=" 20150312-syscalls_test.patch"
-PATCH_URI+=" unix_line_endings_cygwin.patch"
+# PATCH_URI+=" unix_line_endings_cygwin.patch"
 
 clisp_CATEGORY="Devel Interpreters Math Shells"
 clisp_SUMMARY="An ANSI Common Lisp implementation"
@@ -155,12 +153,16 @@ src_install() {
     cyginstall MODULES="${MODULES}"
 }
 
-# clx and dbus tests have to be run under X.
+# clx and dbus tests have to be run under X.  Sometimes the clx test
+# hangs and has to be run manually: 'cd ${B}; make full-mod-check
+# MODULES=clx/new-clx'.
 
 src_test() {
     cd ${B}
-    make -k check
-    make -k base-mod-check
+    # local DLLS=$(find . -name '*.dll')
+    # rebase -O ${DLLS}
+    make -k check || true
+    make -k base-mod-check || true
     make -k full-mod-check MODULES="${CHECK_MODULES}"
 }
 

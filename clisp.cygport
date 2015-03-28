@@ -122,8 +122,9 @@ case "${ARCH}" in
 	# The test suite claims that win32 can't be found.  postgresql
 	# test requires postgresql installed, and maybe service
 	# runnng.  berkeley-db needs to be tested last; maybe there's
-	# a timing issue with locks?
-	CHECK_MODULES="rawsock dirkey pcre postgresql fastcgi zlib gdbm libsvm clx/new-clx gtk2 dbus berkeley-db"
+	# a timing issue with locks?  The testsuite for libsvm takes
+	# hours to run, so we don't do it routinely.
+	CHECK_MODULES="rawsock dirkey pcre postgresql fastcgi zlib gdbm clx/new-clx gtk2 dbus berkeley-db"
 	WITHMODS="--with-modules=$(echo ${MODULES} | sed -e's, , --with-modules=,g')"
 	CYGCONF_ARGS="${WITHMODS} --docdir=/usr/share/doc/${PN}"
 	;;

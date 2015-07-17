@@ -1,14 +1,13 @@
 The following packages have been updated in the Cygwin distribution:
 
-* clisp-2.49-4.20150312hg15611
+* clisp-2.49-5.20150312hg15611
 
-* clisp-clx-2.49-4.20150312hg15611 (32-bit only)
-* clisp-gdi-2.49-4.20150312hg15611 (32-bit only)
-* clisp-gtk2-2.49-4.20150312hg15611 (32-bit only)
+* clisp-clx-2.49-5.20150312hg15611 (32-bit only)
+* clisp-gtk2-2.49-5.20150312hg15611 (32-bit only)
 
-This is a rebuild of the 2.49-2.20150312hg15611 package, with a simpler implementation of dynamic modules.  For further information, see the announcement of the previous release (https://cygwin.com/ml/cygwin-announce/2015-03/msg00025.html).
+This is a rebuild of the 2.49-4.20150312hg15611 packages, the main change being that the 64-bit build now uses libsigsegv, which was recently added to the 64-bit distribution.  In addition, I have patched the sources so that clisp will not attempt to save an executable memory image on Cygwin; see https://cygwin.com/ml/cygwin-apps/2015-03/msg00188.html.
 
-I hope this solves the problems with maxima mentioned in https://cygwin.com/ml/cygwin-announce/2015-03/msg00040.html.
+For further information, see the announcement https://cygwin.com/ml/cygwin-announce/2015-03/msg00025.html.
 
 Ken Brown
 Cygwin's clisp maintainer

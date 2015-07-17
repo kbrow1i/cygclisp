@@ -1,0 +1,21 @@
+# HG changeset patch
+# User Ken Brown <kbrown@cornell.edu>
+# Date 1429042817 14400
+#      Tue Apr 14 16:20:17 2015 -0400
+# Node ID 5383b0dea9eef525202949979d621e9f84a91fec
+# Parent  abc756d38a96bd7959869ca47d66590df7c19baf
+Don't allow saving executable memory images on Cygwin
+
+diff -r abc756d38a96 -r 5383b0dea9ee src/savemem.lisp
+--- a/src/savemem.lisp	Sat Mar 14 14:45:32 2015 -0400
++++ b/src/savemem.lisp	Tue Apr 14 16:20:17 2015 -0400
+@@ -38,6 +38,9 @@
+                     ((:script *script*) (null init-function))
+                     keep-global-handlers (start-package *package*)
+                     (locked-packages *system-package-list*) executable)
++  (if executable
++      (error
++       "Sorry, this build does not support saving executable memory images"))
+   (let* ((old-driver *driver*) old-global-handlers file-size
+          (*package* (sys::%find-package start-package))
+          (active-restarts *active-restarts*)

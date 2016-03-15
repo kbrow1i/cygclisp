@@ -1,13 +1,21 @@
-The following packages have been updated in the Cygwin distribution:
+From cygwin-announce-clisp-2.49-6.20150312hg15611 Tue Mar 15 19:33:33 2016
+From: Ken Brown <kbrown@cornell.edu>
+To: cygwin-announce@cygwin.com
+Date: Tue, 15 Mar 2016 19:33:33 -0400
+Subject: clisp 2.49-6.20150312hg15611 (x86_64 only)
 
-* clisp-2.49-5.20150312hg15611
+The following package has been uploaded to the 64-bit Cygwin
+distribution:
 
-* clisp-clx-2.49-5.20150312hg15611 (32-bit only)
-* clisp-gtk2-2.49-5.20150312hg15611 (32-bit only)
+* clisp-2.49-6.20150312hg15611
 
-This is a rebuild of the 2.49-4.20150312hg15611 packages, the main change being that the 64-bit build now uses libsigsegv, which was recently added to the 64-bit distribution.  In addition, I have patched the sources so that clisp will not attempt to save an executable memory image on Cygwin; see https://cygwin.com/ml/cygwin-apps/2015-03/msg00188.html.
+This is a rebuild of the 2.49-5.20150312hg15611 package, the only
+change being that I am now able to provide several modules that I
+couldn't build before because of a gcc bug.  In particular, this
+release includes the regexp module.
 
-For further information, see the announcement https://cygwin.com/ml/cygwin-announce/2015-03/msg00025.html.
+For further information about the clisp release, see the announcement
+https://cygwin.com/ml/cygwin-announce/2015-03/msg00025.html.
 
 Ken Brown
 Cygwin's clisp maintainer

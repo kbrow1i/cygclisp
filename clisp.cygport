@@ -1,6 +1,6 @@
 NAME="clisp"
 VERSION=2.49
-RELEASE=5.20150312hg15611
+RELEASE=6.20150312hg15611
 HOMEPAGE="http://clisp.cons.org/"
 ORIG_PV=2.49+
 
@@ -28,7 +28,7 @@ PATCH_URI+=" http://sourceforge.net/p/clisp/patches/44/attachment/fix_dynamic_lo
 # The following aren't ready for upstream.
 PATCH_URI+=" 10-update_src_configure.patch"
 PATCH_URI+=" 11-update_modules_syscalls_configure.patch"
-PATCH_URI+=" 12-no_regexp_x86_64_cygwin.patch"
+# PATCH_URI+=" 12-no_regexp_x86_64_cygwin.patch"
 PATCH_URI+=" 2.49+-gtk2_lib_name.patch"
 PATCH_URI+=" 2.49-no_cygwin_README.patch"
 PATCH_URI+=" 20150312-berkeley_db_test.patch"
@@ -101,7 +101,9 @@ fi
 
 MAKEOPTS+=" -j1"
 
-DEPEND="libsigsegv-devel"
+DEPEND="libgdbm-devel libpcre-devel libsigsegv-devel"
+MODULES="rawsock dirkey berkeley-db pcre gdbm clx/new-clx"
+CHECK_MODULES="rawsock dirkey pcre gdbm clx/new-clx"
 case "${ARCH}" in
     i686)
 	DEPEND+="
@@ -109,26 +111,26 @@ case "${ARCH}" in
 		libdb4.8-devel
 		libfcgi-devel
 		libgcrypt-devel
-		libgdbm-devel
 		libglade2.0-devel
-		libpcre-devel
 		libpq-devel
 		libsvm-devel
 		postgresql-devel
 "
-	MODULES="rawsock dirkey bindings/win32 berkeley-db pcre postgresql fastcgi zlib gdbm libsvm clx/new-clx gtk2 dbus"
+	# The following modules require FFI and so can’t currently be
+	# built on x86_64.
+	MODULES+=" bindings/win32 postgresql fastcgi zlib libsvm gtk2 dbus"
 	# The test suite claims that win32 can't be found.  postgresql
 	# test requires postgresql installed, and maybe service
 	# runnng.  berkeley-db needs to be tested last; maybe there's
 	# a timing issue with locks?  The testsuite for libsvm takes
 	# hours to run, so we don't do it routinely.
-	CHECK_MODULES="rawsock dirkey pcre postgresql fastcgi zlib gdbm clx/new-clx gtk2 dbus berkeley-db"
+	CHECK_MODULES+=" postgresql fastcgi zlib gtk2 dbus berkeley-db"
 	WITHMODS="--with-modules=$(echo ${MODULES} | sed -e's, , --with-modules=,g')"
 	CYGCONF_ARGS="${WITHMODS} --docdir=/usr/share/doc/${PN}"
 	;;
     x86_64)
-	MODULES="rawsock dirkey"
-	CHECK_MODULES=${MODULES}
+	DEPEND+=" libdb-devel"
+	CHECK_MODULES+=" berkeley-db"
 	WITHMODS="--with-modules=$(echo ${MODULES} | sed -e's, , --with-modules=,g')"
 	CYGCONF_ARGS="${WITHMODS} --docdir=/usr/share/doc/${PN} --without-ffcall"
 	;;

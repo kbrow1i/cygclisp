@@ -1,21 +1,27 @@
-From cygwin-announce-clisp-2.49-6.20150312hg15611 Tue Mar 15 19:33:33 2016
+From cygwin-announce-clisp-2.49-6.20150312hg15611 Sat Oct 15 15:16:18 2016
 From: Ken Brown <kbrown@cornell.edu>
 To: cygwin-announce@cygwin.com
-Date: Tue, 15 Mar 2016 19:33:33 -0400
-Subject: clisp 2.49-6.20150312hg15611 (x86_64 only)
+Date: Sat, 15 Oct 2016 15:16:18 -0400
+Subject: clisp 2.49-6.20150312hg15611 (x86 only)
 
-The following package has been uploaded to the 64-bit Cygwin
+The following packages have been uploaded to the 32-bit Cygwin
 distribution:
 
 * clisp-2.49-6.20150312hg15611
+* clisp-clx-2.49-6.20150312hg15611
+* clisp-gtk2-2.49-6.20150312hg15611
 
-This is a rebuild of the 2.49-5.20150312hg15611 package, the only
-change being that I am now able to provide several modules that I
-couldn't build before because of a gcc bug.  In particular, this
-release includes the regexp module.
+ANSI Common Lisp is a high-level, general-purpose programming
+language.  GNU CLISP is a Common Lisp implementation by Bruno Haible
+of Karlsruhe University and Michael Stoll of Munich University, both
+in Germany.  It mostly supports the Lisp described in the ANSI Common
+Lisp standard.  GNU CLISP includes an interpreter, a compiler, a
+debugger, CLOS, MOP, a foreign language interface, sockets, i18n, fast
+bignums, and more.  An X11 interface is available through CLX, Garnet,
+CLUE/CLIO.  GNU CLISP runs Maxima, ACL2, and many other Common Lisp
+packages.
 
-For further information about the clisp release, see the announcement
-https://cygwin.com/ml/cygwin-announce/2015-03/msg00025.html.
+This is a rebuild for db-5.3 and gdbm-1.12.
 
 Ken Brown
 Cygwin's clisp maintainer

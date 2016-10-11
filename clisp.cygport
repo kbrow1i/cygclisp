@@ -43,6 +43,7 @@ PATCH_URI+=" 20150312-socket_test.patch"
 PATCH_URI+=" 20150312-syscalls_test.patch"
 PATCH_URI+=" unix_line_endings_cygwin.patch"
 PATCH_URI+=" cygwin-no-save-executable.patch"
+PATCH_URI+=" sys_select.patch"
 
 clisp_CATEGORY="Devel Interpreters Math Shells"
 clisp_SUMMARY="An ANSI Common Lisp implementation"
@@ -127,6 +128,8 @@ case "${ARCH}" in
 	CHECK_MODULES+=" postgresql fastcgi zlib gtk2 dbus berkeley-db"
 	WITHMODS="--with-modules=$(echo ${MODULES} | sed -e's, , --with-modules=,g')"
 	CYGCONF_ARGS="${WITHMODS} --docdir=/usr/share/doc/${PN}"
+	# Avoid alignment error when building.
+	CFLAGS+=" -falign-functions=4"
 	;;
     x86_64)
 	DEPEND+=" libdb-devel"
@@ -164,6 +167,7 @@ src_test() {
     cd ${B}
     # local DLLS=$(find . -name '*.dll')
     # rebase -O ${DLLS}
+    # find . -name '*.dll' | rebase -OT -
     make -k check || true
     make -k base-mod-check || true
     make -k full-mod-check MODULES="${CHECK_MODULES}"

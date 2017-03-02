@@ -13,8 +13,8 @@ install:
 - appveyor DownloadFile http://cygwin.com/%SETUP% -FileName %CACHE%\%SETUP%
 - echo Updating Cygwin
 - '%CACHE%\%SETUP% -qnNdO -R "%CYGWIN_ROOT%" -s "%CYGWIN_MIRROR%" -l "%CACHE%"'
-- if "%BUILD%"=="x86_64-pc-cygwin" set DEPS=mercurial,cygport,libdb-devel,libgdbm-devel,libpcre-devel,libsigsegv-devel,libX11-devel
-- if "%BUILD%"=="i686-pc-cygwin" set DEPS=mercurial,cygport,libdb-devel,libgdbm-devel,libpcre-devel,libsigsegv-devel,ffcall,libfcgi-devel,libgcrypt-devel,libglade2.0-devel,libpq-devel,libsvm-devel,postgresql-devel,libX11-devel
+- if "%BUILD%"=="x86_64-pc-cygwin" set DEPS=mercurial,cygport,libdb-devel,libgdbm-devel,libpcre-devel,libsigsegv-devel,libX11-devel,libXext-devel,libXpm-devel
+- if "%BUILD%"=="i686-pc-cygwin" set DEPS=mercurial,cygport,libdb-devel,libgdbm-devel,libpcre-devel,libsigsegv-devel,ffcall,libfcgi-devel,libgcrypt-devel,libglade2.0-devel,libpq-devel,libsvm-devel,postgresql-devel,libX11-devel,libXext-devel,libXpm-devel
 - echo Installing build dependencies
 - '%CACHE%\%SETUP% -qnNdO -R "%CYGWIN_ROOT%" -s "%CYGWIN_MIRROR%" -l "%CACHE%" -P "%DEPS%"'
 - echo Install done

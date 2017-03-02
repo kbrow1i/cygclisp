@@ -109,6 +109,8 @@ DEPEND="
 	libsigsegv-devel
 	mercurial
 	libX11-devel
+	libXext-devel
+	libXpm-devel
 "
 MODULES="rawsock dirkey berkeley-db pcre gdbm clx/new-clx"
 CHECK_MODULES="rawsock dirkey pcre gdbm clx/new-clx"

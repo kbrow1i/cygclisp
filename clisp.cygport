@@ -10,7 +10,7 @@ ORIG_PV=2.49+
 # SRC_URI="http://prdownloads.sourceforge.net/${PN}/${PN}-${PV}.tar.bz2?download"
 
 HG_URI="http://hg.code.sf.net/p/clisp/clisp"
-# HG_REV=15611 as of 2015-03-12
+HG_REV=15611 # as of 2015-03-12
 inherit hg
 
 # The following have been sent upstream but not applied yet.
@@ -102,14 +102,13 @@ fi
 
 MAKEOPTS+=" -j1"
 
-DEPEND="libgdbm-devel libpcre-devel libsigsegv-devel"
+DEPEND="libdb-devel libgdbm-devel libpcre-devel libsigsegv-devel"
 MODULES="rawsock dirkey berkeley-db pcre gdbm clx/new-clx"
 CHECK_MODULES="rawsock dirkey pcre gdbm clx/new-clx"
 case "${ARCH}" in
     i686)
 	DEPEND+="
 		ffcall
-		libdb4.8-devel
 		libfcgi-devel
 		libgcrypt-devel
 		libglade2.0-devel
@@ -132,7 +131,6 @@ case "${ARCH}" in
 	CFLAGS+=" -falign-functions=4"
 	;;
     x86_64)
-	DEPEND+=" libdb-devel"
 	CHECK_MODULES+=" berkeley-db"
 	WITHMODS="--with-modules=$(echo ${MODULES} | sed -e's, , --with-modules=,g')"
 	CYGCONF_ARGS="${WITHMODS} --docdir=/usr/share/doc/${PN} --without-ffcall"

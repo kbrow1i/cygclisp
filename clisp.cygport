@@ -102,7 +102,14 @@ fi
 
 MAKEOPTS+=" -j1"
 
-DEPEND="libdb-devel libgdbm-devel libpcre-devel libsigsegv-devel mercurial"
+DEPEND="
+	libdb-devel
+	libgdbm-devel
+	libpcre-devel
+	libsigsegv-devel
+	mercurial
+	libX11-devel
+"
 MODULES="rawsock dirkey berkeley-db pcre gdbm clx/new-clx"
 CHECK_MODULES="rawsock dirkey pcre gdbm clx/new-clx"
 case "${ARCH}" in

@@ -124,6 +124,7 @@ case "${ARCH}" in
 		libpq-devel
 		libsvm-devel
 		postgresql-devel
+		libdbus1-devel
 "
 	# The following modules require FFI and so can’t currently be
 	# built on x86_64.

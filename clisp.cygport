@@ -122,6 +122,7 @@ case "${ARCH}" in
 		libgcrypt-devel
 		libglade2.0-devel
 		libpq-devel
+		libpq5
 		libsvm-devel
 		postgresql-devel
 		libdbus1-devel

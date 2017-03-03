@@ -1,31 +1,24 @@
 NAME="clisp"
 VERSION=2.49
-RELEASE=7.20150312hg15611
+RELEASE=1.20170303hg15769
 HOMEPAGE="http://clisp.cons.org/"
 ORIG_PV=2.49+
 
 PKG_NAMES="${PN} ${PN}-clx"
 
 HG_URI="http://hg.code.sf.net/p/clisp/clisp"
-HG_REV=15611 # as of 2015-03-12
+HG_REV=15769 # as of 2017-03-03
 inherit hg
 
 # The following have been sent upstream but not applied yet.
-PATCH_URI+=" http://sourceforge.net/p/clisp/patches/36/attachment/01-Handle.patch"
-PATCH_URI+=" http://sourceforge.net/p/clisp/patches/37/attachment/02-declare_ioctl.patch"
-PATCH_URI+=" http://sourceforge.net/p/clisp/patches/38/attachment/03-LINUX_NOEXEC_HEAPCODES.patch"
 PATCH_URI+=" http://sourceforge.net/p/clisp/patches/39/attachment/04-uuid.patch"
 PATCH_URI+=" http://sourceforge.net/p/clisp/patches/_discuss/thread/3427bc0d/b018/attachment/clisp-libsvm.patch"
+
+# The following were rejected upstream
 PATCH_URI+=" http://sourceforge.net/p/clisp/patches/40/attachment/06-gtk_server_cfg.patch"
-PATCH_URI+=" http://sourceforge.net/p/clisp/patches/41/attachment/07-signal_m4.patch"
-PATCH_URI+=" http://sourceforge.net/p/clisp/patches/42/attachment/08-no___CYGWIN32__.patch"
-PATCH_URI+=" http://sourceforge.net/p/clisp/patches/43/attachment/09-x86_x4_ULONGLONG.patch"
-PATCH_URI+=" http://sourceforge.net/p/clisp/patches/44/attachment/fix_dynamic_loading_cygwin.patch"
 
 # The following aren't ready for upstream.
-PATCH_URI+=" 10-update_src_configure.patch"
 PATCH_URI+=" 11-update_modules_syscalls_configure.patch"
-# PATCH_URI+=" 12-no_regexp_x86_64_cygwin.patch"
 PATCH_URI+=" 2.49+-gtk2_lib_name.patch"
 PATCH_URI+=" 2.49-no_cygwin_README.patch"
 PATCH_URI+=" 20150312-berkeley_db_test.patch"
@@ -36,11 +29,11 @@ PATCH_URI+=" 20150312-libsvm_test.patch"
 PATCH_URI+=" 20150312-path_test.patch"
 PATCH_URI+=" 20150312-rawsock_test.patch"
 PATCH_URI+=" 20150312-postgresql_test.patch"
-PATCH_URI+=" 20150312-socket_test.patch"
+PATCH_URI+=" 20170303-socket_test.patch"
 PATCH_URI+=" 20150312-syscalls_test.patch"
 PATCH_URI+=" unix_line_endings_cygwin.patch"
 PATCH_URI+=" cygwin-no-save-executable.patch"
-PATCH_URI+=" sys_select.patch"
+PATCH_URI+=" 20170303-declare_ioctl.patch"
 
 clisp_CATEGORY="Devel Interpreters Math Shells"
 clisp_SUMMARY="An ANSI Common Lisp implementation"
@@ -93,8 +86,11 @@ fi
 MAKEOPTS+=" -j1"
 
 DEPEND="
-	libcrypt0
+	libX11-devel
+	libXext-devel
+	libXpm-devel
 	libcrypt-devel
+	libcrypt0
 	libdb-devel
 	libgdbm-devel
 	libiconv-devel
@@ -102,9 +98,6 @@ DEPEND="
 	libpcre-devel
 	libsigsegv-devel
 	mercurial
-	libX11-devel
-	libXext-devel
-	libXpm-devel
 "
 MODULES="rawsock dirkey berkeley-db pcre gdbm clx/new-clx"
 CHECK_MODULES="rawsock dirkey pcre gdbm clx/new-clx"
@@ -112,6 +105,7 @@ case "${ARCH}" in
     i686)
 	DEPEND+="
 		ffcall
+		libdbus1-devel
 		libfcgi-devel
 		libgcrypt-devel
 		libglade2.0-devel
@@ -119,7 +113,6 @@ case "${ARCH}" in
 		libpq5
 		libsvm-devel
 		postgresql-devel
-		libdbus1-devel
 "
 	# The following modules require FFI and so can’t currently be
 	# built on x86_64.
@@ -168,8 +161,6 @@ src_install() {
 
 src_test() {
     cd ${B}
-    # local DLLS=$(find . -name '*.dll')
-    # rebase -O ${DLLS}
     # find . -name '*.dll' | rebase -OT -
     make -k check || true
     make -k base-mod-check || true

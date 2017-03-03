@@ -1,13 +1,10 @@
 NAME="clisp"
 VERSION=2.49
-RELEASE=6.20150312hg15611
+RELEASE=7.20150312hg15611
 HOMEPAGE="http://clisp.cons.org/"
 ORIG_PV=2.49+
 
-# SRC_URI="ftp://ftp.gnu.org/pub/gnu/${PN}/release/${PV}/${PN}-${PV}.tar.gz"
-# SRC_URI="ftp://sunsite.unc.edu/pub/Linux/devel/lang/lisp/${PN}-${PV}.tar.bz2"
-# SRC_URI="http://puzzle.dl.sourceforge.net/sourceforge/${PN}/${PN}-${PV}.tar.bz2"
-# SRC_URI="http://prdownloads.sourceforge.net/${PN}/${PN}-${PV}.tar.bz2?download"
+PKG_NAMES="${PN} ${PN}-clx"
 
 HG_URI="http://hg.code.sf.net/p/clisp/clisp"
 HG_REV=15611 # as of 2015-03-12
@@ -57,28 +54,12 @@ bignums, and more.  An X11 interface is available through CLX, Garnet,
 CLUE/CLIO.  GNU CLISP runs Maxima, ACL2, and many other Common Lisp
 packages."
 
-if [ "${ARCH}" = i686 ]
-then
-    
-    # Between releases 2.49-4.20150312hg15611 and
-    # 2.49-5.20150312hg15611 I uploaded a new setup.hint for clisp-gdi
-    # putting it in the _obsolete category.  I should have done this
-    # when it was first made empty.
-    # PKG_NAMES="${PN} ${PN}-clx ${PN}-gdi ${PN}-gtk2"
-    PKG_NAMES="${PN} ${PN}-clx ${PN}-gtk2"
-    clisp_clx_CATEGORY="Interpreters"
-    clisp_gtk2_CATEGORY="Interpreters"
+clisp_clx_CATEGORY="Interpreters"
+clisp_clx_SUMMARY="The new-clx module for clisp"
+clisp_clx_DESCRIPTION="This is the new-clx clisp module for X.Org."
+clisp_clx_REQUIRES="clisp"
 
-    clisp_clx_SUMMARY="The new-clx module for clisp"
-    clisp_gtk2_SUMMARY="The GTK2 + dbus module for clisp"
-
-    clisp_clx_DESCRIPTION="This is the new-clx clisp module for X.Org."
-    clisp_gtk2_DESCRIPTION="This is the gtk2 clisp module for X.Org, with dbus included."
-
-    clisp_clx_REQUIRES="clisp"
-    clisp_gtk2_REQUIRES="clisp"
-
-    clisp_CONTENTS="
+clisp_CONTENTS="
 --exclude=usr/lib/${PN}-${ORIG_PV}/dbus
 --exclude=usr/lib/${PN}-${ORIG_PV}/clx
 --exclude=usr/lib/${PN}-${ORIG_PV}/dynmod/*clx*
@@ -88,10 +69,19 @@ then
 usr
 "
 
-    clisp_clx_CONTENTS="
+clisp_clx_CONTENTS="
 usr/lib/${PN}-${ORIG_PV}/clx
 usr/lib/${PN}-${ORIG_PV}/dynmod/*clx*
 "
+
+if [ "${ARCH}" = i686 ]
+then
+    PKG_NAMES+=" ${PN}-gtk2"
+    clisp_gtk2_CATEGORY="Interpreters"
+    clisp_gtk2_SUMMARY="The GTK2 + dbus module for clisp"
+    clisp_gtk2_DESCRIPTION="This is the gtk2 clisp module for X.Org, with dbus included."
+    clisp_gtk2_REQUIRES="clisp"
+
     clisp_gtk2_CONTENTS="
 usr/lib/${PN}-${ORIG_PV}/gtk2
 usr/lib/${PN}-${ORIG_PV}/dbus
@@ -185,14 +175,3 @@ src_test() {
     make -k base-mod-check || true
     make -k full-mod-check MODULES="${CHECK_MODULES}"
 }
-
-## Reini's comments:
-
-# --with-libpari-prefix=/usr/local --with-module=pari fails at freeall() and init_opts
-# --with-module=matlab requires the redistributable matlab dll's in your path. 
-#   maybe this requires an extra clisp-matlab package. Fixed by --with-dynamic-modules
-# --with-module=fastcgi is linked statically, so (FASTCGI:ACCEPT) works in 
-#   clisp -K full without installed fcgi. Note: Tests with lighttpd dumped core.
-# --with-module=gdi is Dan Stangers experimental gdi interface (native windows gui)
-# --with-jitc=lightning in work. Too slow yet and still in its infancy.
-# --with-threads works, but too slow

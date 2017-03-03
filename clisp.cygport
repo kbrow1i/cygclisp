@@ -103,8 +103,12 @@ fi
 MAKEOPTS+=" -j1"
 
 DEPEND="
+	libcrypt0
+	libcrypt-devel
 	libdb-devel
 	libgdbm-devel
+	libiconv-devel
+	libncurses-devel
 	libpcre-devel
 	libsigsegv-devel
 	mercurial

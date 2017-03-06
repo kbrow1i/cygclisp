@@ -16,7 +16,7 @@ cygport clisp.cygport inst
 echo packaging...
 cygport clisp.cygport pkg
 
-# echo testing...
-# cygport clisp.cygport test
+echo testing...
+cygport clisp.cygport test
 
 tar -cJf artifact.tar.xz clisp-*/dist clisp-*/log

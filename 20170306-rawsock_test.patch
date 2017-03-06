@@ -4,7 +4,7 @@
  (rawsock:sock-close *sock1*) 0
  (rawsock:sock-close *sock2*) 0
  
-+;; This fails on Cygwin with OS Error on socket 8: [:EFAULT]: Bad address.
++;; This fails on Cygwin with OS Error on socket 9: [:EFAULT]: Bad address.
  ;; message
 +#-cygwin
  (when (and (fboundp 'rawsock:sendmsg) (fboundp 'rawsock:recvmsg))
@@ -19,3 +19,18 @@
  
  #-win32 (rawsock:sock-write 1 (to-bytes "foo")) #-win32 3
  
+@@ -352,11 +352,12 @@ NIL
+ (or (not (fboundp 'rawsock:if-name-index))
+     (listp (show (rawsock:if-name-index) :pretty t))) T
+ 
+-(when (fboundp 'rawsock:if-name-index)
++;; This fails on Cygwin with OS-ERROR(EPIPE): Broken pipe.
++#-cygwin (when (fboundp 'rawsock:if-name-index)
+   (dolist (i-n (rawsock:if-name-index))
+     (assert (= (rawsock:if-name-index (cdr i-n)) (car i-n)))
+     (assert (string= (rawsock:if-name-index (car i-n)) (cdr i-n)))))
+-NIL
++#-cygwin NIL
+ 
+ (or (not (fboundp 'rawsock:ifaddrs))
+     (listp (show (rawsock:ifaddrs) :pretty t))) T

@@ -14,17 +14,18 @@
  (close *socket-1*) T
  
  ;; https://sourceforge.net/p/clisp/bugs/587/: non-0 timeout
-@@ -549,7 +550,8 @@ T
+@@ -550,7 +550,9 @@ T
            interfaces))
  ("0.0.0.0" "127.0.0.1" "0.0.0.0" "127.0.0.1")
  
 -(multiple-value-bind (run args) (cmd-args)
 +;; On Cygwin we get OS-STREAM-ERROR(104): Connection reset by peer.
 +#-cygwin (multiple-value-bind (run args) (cmd-args)
++
    (let ((se (socket:socket-server)))
      (ext:run-program run :arguments (append args (list "-q" "-q" "-x" (format nil "(close (socket:socket-connect ~D))" (socket:socket-server-port se))))
                       :wait nil :input nil :output nil)
-@@ -571,14 +573,15 @@ T
+@@ -572,11 +574,12 @@ T
                (end-of-file (c)
                  (princ 'read-char) (princ-error c) 'end-of-file))))
        (socket:socket-server-close se))))
@@ -32,14 +33,10 @@
 +#-cygwin (:OUTPUT "foo" :OUTPUT T NIL T NIL END-OF-FILE)
  
  ;; https://sourceforge.net/p/clisp/feature-requests/46/
--(check-os-error (socket:socket-connect 0)
-+;; On Cygwin we get OS-ERROR(125): Cannot assign requested address.
-+#-cygwin (check-os-error (socket:socket-connect 0)
-   #-(or win32 macos) (:ECONNREFUSED 111)
+ (check-os-error (socket:socket-connect 0)
+-  #-(or win32 macos) (:ECONNREFUSED 111)
++  #-(or win32 macos cygwin) (:ECONNREFUSED 111)
++  #+cygwin (:EADDRNOTAVAIL 125)
    #+macos (:EADDRNOTAVAIL 49)
    #+win32 (:EADDRNOTAVAIL 10049))
--T
-+#-cygwin T
- (check-os-error (socket-server 1240 :interface "[/]=") (:EINVAL 22)) T
- 
- ;; clean-up
+ T

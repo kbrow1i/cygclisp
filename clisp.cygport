@@ -22,16 +22,17 @@ PATCH_URI+=" http://sourceforge.net/p/clisp/patches/40/attachment/06-gtk_server_
 PATCH_URI+=" 20170303-update_modules_syscalls_configure.patch"
 PATCH_URI+=" 2.49+-gtk2_lib_name.patch"
 PATCH_URI+=" 2.49-no_cygwin_README.patch"
-PATCH_URI+=" 20150312-berkeley_db_test.patch"
-PATCH_URI+=" 20150312-clx_test.patch"
+PATCH_URI+=" 20170306-berkeley_db_test.patch"
+# PATCH_URI+=" 20150312-clx_test.patch"
 PATCH_URI+=" 20150312-excepsit_test.patch"
 PATCH_URI+=" 20150312-gdbm_test.patch"
-PATCH_URI+=" 20150312-libsvm_test.patch"
+# PATCH_URI+=" 20150312-libsvm_test.patch"
 PATCH_URI+=" 20150312-path_test.patch"
-PATCH_URI+=" 20150312-rawsock_test.patch"
-PATCH_URI+=" 20150312-postgresql_test.patch"
-PATCH_URI+=" 20170303-socket_test.patch"
-PATCH_URI+=" 20150312-syscalls_test.patch"
+PATCH_URI+=" 20170306-rawsock_test.patch"
+# PATCH_URI+=" 20150312-postgresql_test.patch"
+PATCH_URI+=" 20170306-socket_test.patch"
+PATCH_URI+=" 20170306-syscalls_test.patch"
+PATCH_URI+=" temp.patch"
 PATCH_URI+=" unix_line_endings_cygwin.patch"
 PATCH_URI+=" cygwin-no-save-executable.patch"
 
@@ -120,18 +121,18 @@ case "${ARCH}" in
 "
 	# The following modules require FFI and so can’t currently be
 	# built on x86_64.
-	MODULES+=" bindings/win32 postgresql fastcgi zlib libsvm gtk2 dbus"
+	# MODULES+=" bindings/win32 postgresql fastcgi zlib libsvm gtk2 dbus"
+	MODULES+=" bindings/win32 postgresql dbus"
 
 	# The test suite claims that win32 can't be found.  postgresql
 	# test requires postgresql installed, and maybe service
 	# runnng.  berkeley-db needs to be tested last; maybe there's
 	# a timing issue with locks?  The testsuite for libsvm takes
 	# hours to run, so we don't do it routinely.
-	CHECK_MODULES+=" postgresql fastcgi zlib gtk2 dbus berkeley-db"
+	# CHECK_MODULES+=" postgresql fastcgi zlib gtk2 dbus berkeley-db"
+	CHECK_MODULES+=" postgresql berkeley-db dbus"
 	WITHMODS="--with-modules=$(echo ${MODULES} | sed -e's, , --with-modules=,g')"
 	CYGCONF_ARGS="${WITHMODS} --docdir=/usr/share/doc/${PN}"
-	# Avoid alignment error when building.
-	# CFLAGS+=" -falign-functions=4"
 	;;
     x86_64)
 	CHECK_MODULES+=" berkeley-db"
@@ -152,12 +153,12 @@ src_compile() {
     verbose ./configure --prefix=/usr ${CYGCONF_ARGS} ${B} \
 	     || error "configure failed"
     cd ${B}
-    cygmake -k MODULES="${MODULES}" || true
+    cygmake -k MODULES="${MODULES}"
 }
 
 src_install() {
     cd ${B}
-    cyginstall MODULES="${MODULES}" || true
+    cyginstall MODULES="${MODULES}"
 }
 
 # clx and dbus tests have to be run under X.  Sometimes the clx test

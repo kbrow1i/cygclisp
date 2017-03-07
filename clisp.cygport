@@ -32,7 +32,6 @@ PATCH_URI+=" 20170306-rawsock_test.patch"
 PATCH_URI+=" 20150312-postgresql_test.patch"
 PATCH_URI+=" 20170306-socket_test.patch"
 PATCH_URI+=" 20170306-syscalls_test.patch"
-PATCH_URI+=" 20170306-dbus_test.patch"
 PATCH_URI+=" unix_line_endings_cygwin.patch"
 PATCH_URI+=" cygwin-no-save-executable.patch"
 
@@ -124,12 +123,12 @@ case "${ARCH}" in
 	# MODULES+=" bindings/win32 postgresql fastcgi zlib libsvm gtk2 dbus"
 	MODULES+=" bindings/win32 postgresql dbus"
 
-	# The test suite claims that win32 can't be found.  postgresql
-	# test requires postgresql installed, and maybe service
-	# runnng.  The testsuite for libsvm takes hours to run, so we
-	# don't do it routinely.
+	# The test suite claims that win32 can't be found.  The
+	# testsuite for libsvm takes hours to run, so we don't do it
+	# routinely.  I'm temporarily not testing dbus so I can use
+	# AppVeyor, where I don't think I can run tests under X.
 	# CHECK_MODULES+=" postgresql fastcgi zlib gtk2 dbus"
-	CHECK_MODULES+=" postgresql dbus"
+	CHECK_MODULES+=" postgresql"
 	WITHMODS="--with-modules=$(echo ${MODULES} | sed -e's, , --with-modules=,g')"
 	CYGCONF_ARGS="${WITHMODS} --docdir=/usr/share/doc/${PN}"
 	;;

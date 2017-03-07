@@ -29,7 +29,7 @@ PATCH_URI+=" 20150312-gdbm_test.patch"
 # PATCH_URI+=" 20150312-libsvm_test.patch"
 PATCH_URI+=" 20150312-path_test.patch"
 PATCH_URI+=" 20170306-rawsock_test.patch"
-# PATCH_URI+=" 20150312-postgresql_test.patch"
+PATCH_URI+=" 20150312-postgresql_test.patch"
 PATCH_URI+=" 20170306-socket_test.patch"
 PATCH_URI+=" 20170306-syscalls_test.patch"
 PATCH_URI+=" unix_line_endings_cygwin.patch"
@@ -104,7 +104,7 @@ DEPEND="
 # CHECK_MODULES="rawsock dirkey pcre gdbm clx/new-clx"
 
 MODULES="rawsock dirkey berkeley-db pcre gdbm"
-CHECK_MODULES="rawsock dirkey pcre gdbm"
+CHECK_MODULES="rawsock dirkey pcre gdbm berkeley-db"
 case "${ARCH}" in
     i686)
 	DEPEND+="
@@ -125,16 +125,14 @@ case "${ARCH}" in
 
 	# The test suite claims that win32 can't be found.  postgresql
 	# test requires postgresql installed, and maybe service
-	# runnng.  berkeley-db needs to be tested last; maybe there's
-	# a timing issue with locks?  The testsuite for libsvm takes
-	# hours to run, so we don't do it routinely.
-	# CHECK_MODULES+=" postgresql fastcgi zlib gtk2 dbus berkeley-db"
-	CHECK_MODULES+=" postgresql berkeley-db dbus"
+	# runnng.  The testsuite for libsvm takes hours to run, so we
+	# don't do it routinely.
+	# CHECK_MODULES+=" postgresql fastcgi zlib gtk2 dbus"
+	CHECK_MODULES+=" postgresql dbus"
 	WITHMODS="--with-modules=$(echo ${MODULES} | sed -e's, , --with-modules=,g')"
 	CYGCONF_ARGS="${WITHMODS} --docdir=/usr/share/doc/${PN}"
 	;;
     x86_64)
-	CHECK_MODULES+=" berkeley-db"
 	WITHMODS="--with-modules=$(echo ${MODULES} | sed -e's, , --with-modules=,g')"
 	CYGCONF_ARGS="${WITHMODS} --docdir=/usr/share/doc/${PN} --without-ffcall"
 	;;

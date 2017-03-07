@@ -1,0 +1,11 @@
+--- origsrc/clisp/modules/berkeley-db/bdb.c	2017-03-03 11:11:57.000000000 -0500
++++ src/clisp/modules/berkeley-db/bdb.c	2017-03-07 14:19:04.727266800 -0500
+@@ -2753,7 +2753,7 @@ DEFUN(BDB:TXN-RECOVER, dbe &key FIRST :N
+   u_int32_t tx_max;
+   DB_PREPLIST *preplist;
+   int status, ii;
+-  u_int32_t retnum;
++  long retnum;
+   SYSCALL(dbe->get_tx_max,(dbe,&tx_max));
+   preplist = (DB_PREPLIST*)clisp_malloc(tx_max * sizeof(DB_PREPLIST));
+   begin_blocking_system_call();

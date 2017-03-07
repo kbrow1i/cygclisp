@@ -1,0 +1,15 @@
+--- origsrc/clisp/src/lispbibl.d	2017-03-03 11:12:07.000000000 -0500
++++ src/clisp/src/lispbibl.d	2017-03-07 11:43:05.364715400 -0500
+@@ -12732,12 +12732,7 @@ extern void bindhooks (object evalhook_v
+    and then jumps to unwind_protect_to_save.fun.
+  modifies STACK
+  can trigger GC */
+-#if defined(__cplusplus) || !defined(GNU) || defined(__clang__)
+-  /* g++-3.4 and strict ISO C 11 compilers don't like _Noreturn in a typedef. */
+   typedef /* _Noreturn */ /*maygc*/ void (*restartf_t)(gcv_object_t* upto_frame);
+-#else
+-  typedef _Noreturn /*maygc*/ void (*restartf_t) (gcv_object_t* upto_frame);
+-#endif
+ typedef struct {
+   restartf_t fun;
+   gcv_object_t* upto_frame;

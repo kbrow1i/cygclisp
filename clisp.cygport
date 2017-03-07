@@ -32,6 +32,7 @@ PATCH_URI+=" 20170306-rawsock_test.patch"
 PATCH_URI+=" 20150312-postgresql_test.patch"
 PATCH_URI+=" 20170306-socket_test.patch"
 PATCH_URI+=" 20170306-syscalls_test.patch"
+PATCH_URI+=" 20170306-dbus_test.patch"
 PATCH_URI+=" unix_line_endings_cygwin.patch"
 PATCH_URI+=" cygwin-no-save-executable.patch"
 

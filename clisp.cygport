@@ -1,6 +1,6 @@
 NAME="clisp"
 VERSION=2.49
-RELEASE=2.20170306hg15782
+RELEASE=1.20170306hg15782
 HOMEPAGE="http://clisp.cons.org/"
 ORIG_PV=2.49+
 
@@ -141,7 +141,6 @@ case "${ARCH}" in
 	;;
 esac
 	
-CFLAGS+=" -O0"
 export CFLAGS
 LDFLAGS="-Wl,--stack,0x800000"
 export LDFLAGS

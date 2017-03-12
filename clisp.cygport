@@ -1,13 +1,13 @@
 NAME="clisp"
 VERSION=2.49
-RELEASE=1.20170306hg15782
+RELEASE=1.20170312hg15808
 HOMEPAGE="http://clisp.cons.org/"
 ORIG_PV=2.49+
 
 PKG_NAMES="${PN} ${PN}-clx"
 
 HG_URI="http://hg.code.sf.net/p/clisp/clisp"
-HG_REV=15782
+HG_REV=15808
 inherit hg
 
 # The following have been sent upstream but not applied yet.
@@ -125,15 +125,13 @@ case "${ARCH}" in
 "
 	# The following modules require FFI and so can’t currently be
 	# built on x86_64.
-	# MODULES+=" bindings/win32 postgresql fastcgi zlib libsvm gtk2 dbus"
-	MODULES+=" bindings/win32 postgresql dbus"
+	MODULES+=" bindings/win32 postgresql fastcgi zlib libsvm gtk2 dbus"
 
 	# The test suite claims that win32 can't be found.  The
 	# testsuite for libsvm takes hours to run, so we don't do it
 	# routinely.  I'm temporarily not testing dbus so I can use
 	# AppVeyor, where I don't think I can run tests under X.
-	# CHECK_MODULES+=" postgresql fastcgi zlib gtk2 dbus"
-	CHECK_MODULES+=" postgresql"
+	CHECK_MODULES+=" postgresql fastcgi zlib gtk2 dbus"
 	WITHMODS="--with-modules=$(echo ${MODULES} | sed -e's, , --with-modules=,g')"
 	CYGCONF_ARGS="${WITHMODS} --docdir=/usr/share/doc/${PN}"
 	;;

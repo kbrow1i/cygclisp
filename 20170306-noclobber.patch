@@ -1,0 +1,180 @@
+--- origsrc/clisp/src/control.d	2017-03-03 11:11:58.000000000 -0500
++++ src/clisp/src/control.d	2017-03-09 15:26:03.673801700 -0500
+@@ -1589,9 +1589,11 @@ LISPFUN(maplap,seclass_default,2,0,rest,
+ /* (EXT:MAPLAP fun list {list}) */
+   MAPCAN_MAPCON_BODY(Identity,set_last_copy)
+ 
++#define NOCLOBBER volatile
++
+ LISPSPECFORM(tagbody, 0,0,body)
+ { /* (TAGBODY {tag | statement}), CLTL p. 130 */
+-  var object body = popSTACK();
++  var object NOCLOBBER body = popSTACK();
+   { /* build GENV-frame: */
+     var gcv_object_t* top_of_frame = STACK; /* pointer to frame */
+     pushSTACK(aktenv.go_env);
+--- origsrc/clisp/src/eval.d	2017-03-03 11:11:57.000000000 -0500
++++ src/clisp/src/eval.d	2017-03-09 15:26:19.683368600 -0500
+@@ -701,6 +701,8 @@ global void throw_to (object tag) {
+   unwind_upto(FRAME); /* unwind upto there, then jump */
+ }
+ 
++#define NOCLOBBER volatile
++
+ /* UP: Invokes all handlers for condition cond. Returns only, if none
+  of these handlers feels responsible (i.e. if each handler returns).
+  invoke_handlers(cond);
+@@ -710,10 +712,10 @@ global void throw_to (object tag) {
+ global maygc void invoke_handlers (object cond) {
+   /* Also deactivates the handler being called, and all newer handlers.
+      the handler-ranges, which are screened off: */
+-  var stack_range_t* other_ranges = inactive_handlers;
++  var stack_range_t* NOCLOBBER other_ranges = inactive_handlers;
+   var stack_range_t new_range;
+   /* Search for Handler-Frame, that handles a Type with (TYPEP cond type): */
+-  var gcv_object_t* FRAME = STACK;
++  var gcv_object_t* NOCLOBBER FRAME = STACK;
+   while (1) {
+     /* search in Stack starting at FRAME for a suitable HANDLER-Frame: */
+     if (!(other_ranges == NULL) && (FRAME == other_ranges->low_limit)) {
+@@ -726,7 +728,7 @@ global maygc void invoke_handlers (objec
+       if (framecode(FRAME_(0)) == HANDLER_frame_info) { /* Handler-Frame? */
+         /* loop over types of the vectors #(type1 label1 ... typem labelm): */
+         var uintL m2 = Svector_length(Car(FRAME_(frame_handlers))); /* 2*m */
+-        var uintL i = 0;
++        var uintL NOCLOBBER i = 0;
+         do {
+           pushSTACK(cond); /* save cond */
+           pushSTACK(cond);
+@@ -2460,8 +2462,8 @@ local maygc void trace_call (object fun,
+  < mv_count/mv_space: values
+  < STACK: cleaned up, = args_pointer
+  can trigger GC */
+-local maygc Values funcall_iclosure (object closure, gcv_object_t* args_pointer,
+-                                     uintC argcount)
++local maygc Values funcall_iclosure (object NOCLOBBER closure, gcv_object_t* args_pointer,
++                                     uintC NOCLOBBER argcount)
+ {
+   /* 1st step: finish building of APPLY-frame: */
+   var sp_jmp_buf my_jmp_buf;
+@@ -2936,7 +2938,7 @@ local Values eval_ffunction (object fun)
+  > form: form
+  < mv_count/mv_space: values
+  can trigger GC */
+-modexp maygc Values eval (object form)
++modexp maygc Values eval (object NOCLOBBER form)
+ {
+  start:
+   /* Test for Keyboard-Interrupt: */
+@@ -2991,7 +2993,7 @@ modexp maygc Values eval (object form)
+  > form: Form
+  < mv_count/mv_space: values
+  can trigger GC */
+-global maygc Values eval_no_hooks (object form) {
++global maygc Values eval_no_hooks (object NOCLOBBER form) {
+   var sp_jmp_buf my_jmp_buf;
+   /* build EVAL-Frame: */
+   {
+@@ -5734,8 +5736,9 @@ local maygc Values funcall_closure (obje
+   #define GOTO_ERROR(label)  goto label
+   #define DEBUG_CHECK_BYTEPTR(b)     do{}while(0)
+ #endif
+-local /*maygc*/ Values interpret_bytecode_ (object closure_in, Sbvector codeptr,
++local /*maygc*/ Values interpret_bytecode_ (object NOCLOBBER closure_in, Sbvector NOCLOBBER codeptr,
+                                             const uintB* byteptr_in)
++
+ {
+   GCTRIGGER_IF(true, {
+     if (*byteptr_in == cod_handler_begin_push)
+@@ -5758,12 +5761,12 @@ local /*maygc*/ Values interpret_bytecod
+  #endif
+   /* situate argument byteptr in register: */
+  #ifdef byteptr_register
+-  var register const uintB* byteptr __asm__(byteptr_register);
++  var const uintB* byteptr __asm__(byteptr_register);
+   byteptr = byteptr_in;
+  #endif
+   TRACE_CALL(closure,'B','C');
+   /* situate closure in STACK, below the arguments: */
+-  var gcv_object_t* closureptr = (pushSTACK(closure), &STACK_0);
++  var gcv_object_t* NOCLOBBER closureptr = (pushSTACK(closure), &STACK_0);
+  #ifndef FAST_SP
+   /* If there is no fast SP-Access, one has to introduce
+    an extra pointer: */
+--- origsrc/clisp/src/record.d	2017-03-03 11:11:57.000000000 -0500
++++ src/clisp/src/record.d	2017-03-09 15:26:03.689424400 -0500
+@@ -1399,6 +1399,8 @@ LISPFUNNR(punbound,0) { /* not Foldable
+   VALUES1(unbound);
+ }
+ 
++#define NOCLOBBER volatile
++
+ /* update_instance(obj)
+  updates a CLOS instance after its class or one of its superclasses has been
+  redefined.
+@@ -1406,7 +1408,7 @@ LISPFUNNR(punbound,0) { /* not Foldable
+  > obj: the same CLOS instance, not a forward pointer
+  < result: the same CLOS instance, not a forward pointer
+  can trigger GC */
+-global maygc object update_instance (object user_obj, object obj) {
++global maygc object update_instance (object user_obj, object NOCLOBBER obj) {
+   /* Note about the handling of multiple consecutive class redefinitions:
+      When there are multiple class redefinitions before an instance gets to
+      be updated, we call UPDATE-INSTANCE-FOR-REDEFINED-CLASS once for each
+--- origsrc/clisp/src/spvw.d	2017-03-03 11:11:58.000000000 -0500
++++ src/clisp/src/spvw.d	2017-03-09 15:26:03.705050400 -0500
+@@ -2206,6 +2206,8 @@ typedef enum {
+   ON_ERROR_EXIT
+ } on_error_t;
+ 
++#define NOCLOBBER volatile
++
+ /* install the appropriate global handglers
+  can trigger GC */
+ local maygc void install_global_handlers (on_error_t on_error)
+@@ -3490,7 +3492,7 @@ local inline void main_actions (struct a
+     var gcv_object_t* top_of_frame = STACK; /* pointer over frame */
+     var sp_jmp_buf returner; /* return point */
+     var const char* const* fileptr = &p->argv_init_files[0];
+-    var uintL count = p->argv_init_filecount;
++    var NOCLOBBER uintL count = p->argv_init_filecount;
+     finish_entry_frame(DRIVER,returner,,goto done_driver_init_files;);
+     do {
+       pushSTACK(asciz_to_string(*fileptr++,O(misc_encoding)));
+@@ -3508,8 +3510,8 @@ local inline void main_actions (struct a
+     if (p->argv_compile_filecount > 0) {
+       var gcv_object_t* top_of_frame = STACK; /* pointer over frame */
+       var sp_jmp_buf returner; /* return point */
+-      var const argv_compile_file_t* fileptr = &p->argv_compile_files[0];
+-      var uintL count = p->argv_compile_filecount;
++      var const argv_compile_file_t* NOCLOBBER fileptr = &p->argv_compile_files[0];
++      var uintL NOCLOBBER count = p->argv_compile_filecount;
+       finish_entry_frame(DRIVER,returner,,goto done_driver_compile_files;);
+       do {
+         var uintC argcount = 1;
+--- origsrc/clisp/src/stream.d	2017-03-03 11:11:57.000000000 -0500
++++ src/clisp/src/stream.d	2017-03-09 15:26:03.705050400 -0500
+@@ -5835,11 +5835,13 @@ local maygc void clear_output_unbuffered
+     &low_clear_output_unbuffered_handle;                                \
+  } while (0)
+ 
++#define NOCLOBBER volatile
++
+ /* Closes a Channel-Stream.
+  close_ochannel(stream, abort);
+  > stream : Channel-Stream
+  > abort: flag: non-0 => ignore errors */
+-local maygc void close_ochannel (object stream, uintB abort) {
++local maygc void close_ochannel (object NOCLOBBER stream, uintB abort) {
+   pushSTACK(stream);
+   MAYBE_IGNORE_ERRORS(abort,oconv_unshift_output_unbuffered(stream));
+   stream = STACK_0;
+@@ -8325,7 +8327,7 @@ local void closed_buffered (object strea
+  > stream : File-Stream.
+  > abort: flag: non-0 => ignore errors
+  changed in stream: all Components except name and truename */
+-local maygc void close_buffered (object stream, uintB abort) {
++local maygc void close_buffered (object NOCLOBBER stream, uintB abort) {
+   /* Handle=NIL (Stream already closed) -> finished: */
+   if (nullp(BufferedStream_channel(stream)))
+     return;

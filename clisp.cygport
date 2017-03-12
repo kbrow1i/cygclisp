@@ -37,6 +37,8 @@ PATCH_URI+=" 20170306-syscalls_test.patch"
 PATCH_URI+=" 20170306-no_noreturn_in_typedef.patch"
 PATCH_URI+=" 20170306-declare_ioctl.patch"
 PATCH_URI+=" 20170306-berkeley_db_txn_recover.patch"
+PATCH_URI+=" 20170306-noclobber.patch"
+PATCH_URI+=" 20170306-uninitialized.patch"
 
 clisp_CATEGORY="Devel Interpreters Math Shells"
 clisp_SUMMARY="An ANSI Common Lisp implementation"

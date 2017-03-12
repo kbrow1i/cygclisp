@@ -1,0 +1,111 @@
+--- origsrc/clisp/src/spvw_garcol.d	2017-03-03 11:11:58.000000000 -0500
++++ src/clisp/src/spvw_garcol.d	2017-03-09 09:41:30.075779400 -0500
+@@ -2658,6 +2658,8 @@ local bool page_contains_pinned_object(P
+ }
+ #endif
+ 
++#define UNINIT = {0,}
++
+ /* compacting of a page by "decanting" into other pages of the same kind: */
+ #ifdef SPVW_PURE
+ local void gc_compact_from_varobject_page (Heap* heapptr, Page* page, uintL heapnr)
+@@ -2680,8 +2682,8 @@ local void gc_compact_from_varobject_pag
+   {
+     var Pages new_page = EMPTY; /* Page, which is being filled */
+     var AVL(AVLID,stack) stack; /* path from the root to the page */
+-    var aint p2;                /* cache of new_page->page_end */
+-    var uintM l2;               /* cache of new_page->page_room */
++    var aint p2 UNINIT;                /* cache of new_page->page_end */
++    var uintM l2 UNINIT;               /* cache of new_page->page_room */
+     /* try to copy all objects between p1 and p1end : */
+     while (1) {
+       if (p1==p1end)            /* upper bound reached -> finished */
+@@ -2739,8 +2741,8 @@ local void gc_compact_from_cons_page (He
+   {
+     var Pages new_page = EMPTY; /* page, which is filled */
+     var AVL(AVLID,stack) stack; /* path from the root to the page */
+-    var aint p2;                /* cache of new_page->page_end */
+-    var uintM l2;               /* cache of new_page->page_room */
++    var aint p2 UNINIT;                /* cache of new_page->page_end */
++    var uintM l2 UNINIT;               /* cache of new_page->page_room */
+     /* try to copy all objects between p1start and p1: */
+     while (1) {
+       if (p1==p1start)          /* lower bound reached -> finished */
+--- origsrc/clisp/src/array.d	2017-03-03 11:11:57.000000000 -0500
++++ src/clisp/src/array.d	2017-03-09 16:25:40.066331900 -0500
+@@ -4568,6 +4568,8 @@ local uintL test_fillpointer (uintL tota
+   }
+ }
+ 
++#define UNINIT = {0,}
++
+ LISPFUN(make_array,seclass_read,1,0,norest,key,7,
+         (kw(adjustable),kw(element_type),kw(initial_element),
+          kw(initial_contents),kw(fill_pointer),
+@@ -4595,7 +4597,7 @@ LISPFUN(make_array,seclass_read,1,0,nore
+   test_otherkeys(); /* do some other checks */
+   var uintB flags = eltype;
+   var uintL displaced_index_offset;
+-  var uintL fillpointer;
++  var uintL fillpointer UNINIT;
+   /* if not displaced, create data vector and poss. fill: */
+   if (nullp(STACK_1)) { /* displaced-to not supplied? */
+     /* create data vector: */
+@@ -4915,7 +4917,7 @@ LISPFUN(adjust_array,seclass_default,2,0
+      (these will not be modified) and maybe also
+      arrayflags_displaced_bit (this can be modified). */
+   var uintL displaced_index_offset;
+-  var uintL fillpointer;
++  var uintL fillpointer UNINIT;
+   /* if not displaced, create data vector and poss. fill: */
+   if (nullp(STACK_1)) { /* displaced-to not supplied? */
+     var object datenvektor;
+--- origsrc/clisp/src/io.d	2017-03-03 11:12:07.000000000 -0500
++++ src/clisp/src/io.d	2017-03-09 15:48:39.235393000 -0500
+@@ -2345,6 +2345,9 @@ local maygc object read_delimited_list(c
+  #endif
+   return result;
+ }
++
++#define UNINIT = {0,}
++
+ /* then the more special Function: */
+ local maygc object read_delimited_list_recursive (const gcv_object_t* stream_,
+                                                   object endch, object ifdotted)
+@@ -3263,7 +3266,7 @@ LISPFUNN(bit_vector_reader,3) { /* reads
+   buff_1 = TLO(token_buff_1);
+   {
+     var const chart* charptr = &TheSnstring(TheIarray(buff_1)->data)->data[0];
+-    var chart ch;               /* last character ('0' or '1') */
++    var chart ch UNINIT;               /* last character ('0' or '1') */
+     var uintL index = 0;
+     for (; index < n; index++) {
+       if (index < len)
+@@ -3319,7 +3322,7 @@ LISPFUNN(vector_reader,3) {     /* reads
+   elements = popSTACK();        /* retrieve List */
+   { /* and fill it with the Elements: */
+     var gcv_object_t* vptr = &TheSvector(v)->data[0];
+-    var object el;              /* last Element */
++    var object el UNINIT;              /* last Element */
+     var uintL index = 0;
+     for (;index < n; index++) {
+       if (index < len) {        /* possibly fetch next Element */
+--- origsrc/clisp/src/stream.d	2017-03-09 15:29:53.676960900 -0500
++++ src/clisp/src/stream.d	2017-03-09 15:40:46.128010200 -0500
+@@ -14389,13 +14389,15 @@ local uintL handle_set (object socket, f
+   return ret;
+ }
+ 
++#define UNINIT = {0,}
++
+ /* check the appropriate fd_sets for the socket,
+  either a socket-server, a socket-stream or a (socket . direction)
+  see socket_status() for details
+  can trigger GC */
+ local maygc object handle_isset (object socket, fd_set *readfds,
+                                  fd_set *writefds, fd_set *errorfds) {
+-  var object sock, ret;
++  var object sock, ret UNINIT;
+   var direction_t dir;
+   var object status_cons = parse_sock_list(socket,&sock,&dir);
+   var SOCKET in_sock = INVALID_SOCKET;

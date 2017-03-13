@@ -39,6 +39,8 @@ PATCH_URI+=" 20170306-declare_ioctl.patch"
 PATCH_URI+=" 20170306-berkeley_db_txn_recover.patch"
 PATCH_URI+=" 20170312-noclobber.patch"
 PATCH_URI+=" 20170306-uninitialized.patch"
+PATCH_URI+=" 20170312-no_shift_negative_value.patch"
+PATCH_URI+=" 20170312-const_qualifier.patch"
 
 clisp_CATEGORY="Devel Interpreters Math Shells"
 clisp_SUMMARY="An ANSI Common Lisp implementation"
@@ -131,7 +133,8 @@ case "${ARCH}" in
 	# testsuite for libsvm takes hours to run, so we don't do it
 	# routinely.  I'm temporarily not testing dbus so I can use
 	# AppVeyor, where I don't think I can run tests under X.
-	CHECK_MODULES+=" postgresql fastcgi zlib gtk2 dbus"
+	# CHECK_MODULES+=" postgresql fastcgi zlib gtk2 dbus"
+	CHECK_MODULES+=" postgresql fastcgi zlib gtk2"
 	WITHMODS="--with-modules=$(echo ${MODULES} | sed -e's, , --with-modules=,g')"
 	CYGCONF_ARGS="${WITHMODS} --docdir=/usr/share/doc/${PN}"
 	;;

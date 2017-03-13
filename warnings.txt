@@ -1,0 +1,35 @@
+Remaining warnings as of 2017-03-13
+
+x86 only
+========
+/home/kbrown/src/cygclisp/clisp-2.49-1.20170312hg15808.i686/src/clisp/src/eval.d:5765:30: warning: variable ‘byteptr’ might be clobbered by ‘longjmp’ or ‘vfork’ [-Wclobbered]
+
+[Tried to get rid of this by removing "register", but then got
+warning: ignoring asm-specifier for non-static local variable
+‘byteptr’.]
+
+/cygdrive/c/projects/cygclisp/clisp-2.49-1.20170312hg15808.i686/src/clisp/modules/fastcgi/fastcgi_wrappers.c:50:8: warning: no previous declaration for ‘fcgi_getenv’ [-Wmissing-declarations]
+
+[more like this, also in libsvm]
+
+dbus.c:912:3: warning: ‘dbus_watch_get_fd’ is deprecated [-Wdeprecated-declarations]
+
+
+x86_64 only
+===========
+/cygdrive/c/projects/cygclisp/clisp-2.49-1.20170312hg15808.x86_64/src/clisp/src/array.d:4028:11: warning: comparison is always false due to limited range of data type [-Wtype-limits]
+
+/cygdrive/c/projects/cygclisp/clisp-2.49-1.20170312hg15808.x86_64/src/clisp/modules/syscalls/calls.c:3653:21: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+
+
+both
+====
+/cygdrive/c/projects/cygclisp/clisp-2.49-1.20170312hg15808.i686/src/clisp/src/unixaux.d:760:18: warning: division by zero [-Wdiv-by-zero]
+
+/cygdrive/c/projects/cygclisp/clisp-2.49-1.20170312hg15808.i686/src/clisp/src/unixaux.d:761:1: warning: ‘noreturn’ function does return
+
+/cygdrive/c/projects/cygclisp/clisp-2.49-1.20170312hg15808.i686/src/clisp/src/genclisph.d:209:54: warning: comparison of unsigned expression < 0 is always false [-Wtype-limits]
+
+/cygdrive/c/projects/cygclisp/clisp-2.49-1.20170312hg15808.i686/src/clisp/src/modules.c:16:14: warning: ‘module_count’ redeclared without dllimport attribute: previous dllimport ignored [-Wattributes]
+
+/cygdrive/c/projects/cygclisp/clisp-2.49-1.20170312hg15808.x86_64/src/clisp/modules/gdbm/gdbm.c:129:32: warning: passing argument 5 of ‘gdbm_open’ from incompatible pointer type [-Wincompatible-pointer-types]

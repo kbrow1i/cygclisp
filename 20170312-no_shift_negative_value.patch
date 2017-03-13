@@ -1,0 +1,11 @@
+--- origsrc/clisp/src/makemake.in	2017-03-12 22:13:13.657930900 -0400
++++ src/clisp/src/makemake.in	2017-03-13 10:36:35.150751700 -0400
+@@ -1242,7 +1242,7 @@ if [ $XCC_GCC = true ] ; then
+   # clisp assumes two's complement arithmetic, therefore disable
+   # "warning: left shift of negative value".
+   # https://gcc.gnu.org/ml/gcc-patches/2015-04/msg01353.html
+-  if [ $CROSS = false ] ; then
++  if [ $CROSS = false -a $HSYSOS != cygwin ] ; then
+     case "$XCC_GCC_VERSION" in
+       2.* | 3.* | 4.[0-3]*) ;;
+       *)

@@ -1,13 +1,13 @@
 NAME="clisp"
 VERSION=2.49
-RELEASE=1.20170312hg15808
+RELEASE=1.20170321hg15864
 HOMEPAGE="http://clisp.cons.org/"
 ORIG_PV=2.49+
 
 PKG_NAMES="${PN} ${PN}-clx"
 
 HG_URI="http://hg.code.sf.net/p/clisp/clisp"
-HG_REV=15808
+HG_REV=15864
 inherit hg
 
 # The following have been sent upstream but not applied yet.

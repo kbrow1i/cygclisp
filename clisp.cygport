@@ -12,6 +12,7 @@ inherit hg
 
 # The following have been sent upstream but not applied yet.
 PATCH_URI+=" http://sourceforge.net/p/clisp/patches/_discuss/thread/3427bc0d/b018/attachment/clisp-libsvm.patch"
+PATCH_URI+=" https://sourceforge.net/p/clisp/patches/46/attachment/fix_no_dynamic_cygwin.patch"
 
 # The following were rejected upstream
 # PATCH_URI+=" http://sourceforge.net/p/clisp/patches/39/attachment/04-uuid.patch"

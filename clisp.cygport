@@ -12,11 +12,13 @@ inherit hg
 
 # The following have been sent upstream but not applied yet.
 PATCH_URI+=" http://sourceforge.net/p/clisp/patches/_discuss/thread/3427bc0d/b018/attachment/clisp-libsvm.patch"
-PATCH_URI+=" https://sourceforge.net/p/clisp/patches/46/attachment/fix_no_dynamic_cygwin.patch"
+# PATCH_URI+=" http://sourceforge.net/p/clisp/patches/39/attachment/04-uuid.patch"
+# PATCH_URI+=" https://sourceforge.net/p/clisp/patches/46/attachment/fix_no_dynamic_cygwin.patch"
+PATCH_URI+=" https://sourceforge.net/p/clisp/patches/_discuss/thread/58fe6204/2688/attachment/no_dynamic_modules_cygwin.patch"
+PATCH_URI+=" https://sourceforge.net/p/clisp/patches/47/attachment/unix_line_endings_cygwin.patch"
 PATCH_URI+=" https://sourceforge.net/p/clisp/patches/48/attachment/truename.patch"
 
 # The following were rejected upstream
-# PATCH_URI+=" http://sourceforge.net/p/clisp/patches/39/attachment/04-uuid.patch"
 PATCH_URI+=" http://sourceforge.net/p/clisp/patches/40/attachment/06-gtk_server_cfg.patch"
 
 # The following aren't ready for upstream.
@@ -24,8 +26,7 @@ PATCH_URI+=" http://sourceforge.net/p/clisp/patches/40/attachment/06-gtk_server_
 PATCH_URI+=" 20170303-update_modules_syscalls_configure.patch"
 PATCH_URI+=" 2.49+-gtk2_lib_name.patch"
 PATCH_URI+=" 2.49-no_cygwin_README.patch"
-PATCH_URI+=" unix_line_endings_cygwin.patch"
-PATCH_URI+=" cygwin-no-save-executable.patch"
+# PATCH_URI+=" cygwin-no-save-executable.patch"
 PATCH_URI+=" 20170306-berkeley_db_test.patch"
 # PATCH_URI+=" 20150312-clx_test.patch"
 PATCH_URI+=" 20150312-excepsit_test.patch"

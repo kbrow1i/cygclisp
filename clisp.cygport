@@ -1,20 +1,17 @@
 NAME="clisp"
 VERSION=2.49
-RELEASE=1.20170321hg15864
+RELEASE=1.20170321hg15876
 HOMEPAGE="http://clisp.cons.org/"
 ORIG_PV=2.49+
 
 PKG_NAMES="${PN} ${PN}-clx"
 
 HG_URI="http://hg.code.sf.net/p/clisp/clisp"
-HG_REV=15864
+HG_REV=15876
 inherit hg
 
 # The following have been sent upstream but not applied yet.
-PATCH_URI+=" http://sourceforge.net/p/clisp/patches/_discuss/thread/3427bc0d/b018/attachment/clisp-libsvm.patch"
 # PATCH_URI+=" http://sourceforge.net/p/clisp/patches/39/attachment/04-uuid.patch"
-# PATCH_URI+=" https://sourceforge.net/p/clisp/patches/46/attachment/fix_no_dynamic_cygwin.patch"
-PATCH_URI+=" https://sourceforge.net/p/clisp/patches/_discuss/thread/58fe6204/2688/attachment/no_dynamic_modules_cygwin.patch"
 PATCH_URI+=" https://sourceforge.net/p/clisp/patches/47/attachment/unix_line_endings_cygwin.patch"
 PATCH_URI+=" https://sourceforge.net/p/clisp/patches/48/attachment/truename.patch"
 

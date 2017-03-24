@@ -1,6 +1,6 @@
 NAME="clisp"
 VERSION=2.49
-RELEASE=1.20170321hg15876
+RELEASE=1.20170324hg15876
 HOMEPAGE="http://clisp.cons.org/"
 ORIG_PV=2.49+
 
@@ -29,7 +29,7 @@ PATCH_URI+=" 20170306-berkeley_db_test.patch"
 PATCH_URI+=" 20150312-excepsit_test.patch"
 PATCH_URI+=" 20150312-gdbm_test.patch"
 # PATCH_URI+=" 20150312-libsvm_test.patch"
-PATCH_URI+=" 20150312-path_test.patch"
+PATCH_URI+=" 20170324-path_test.patch"
 PATCH_URI+=" 20170306-rawsock_test.patch"
 PATCH_URI+=" 20150312-postgresql_test.patch"
 PATCH_URI+=" 20170306-socket_test.patch"

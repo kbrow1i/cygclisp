@@ -11,12 +11,10 @@ install:
 - if "%BUILD%"=="i686-pc-cygwin" set SETUP=setup-x86.exe && set CYGWIN_ROOT=C:\cygwin
 - if not exist %CACHE% mkdir %CACHE%
 - appveyor DownloadFile http://cygwin.com/%SETUP% -FileName %CACHE%\%SETUP%
-- echo Updating Cygwin
-- '%CACHE%\%SETUP% -qnNdO -R "%CYGWIN_ROOT%" -s "%CYGWIN_MIRROR%" -l "%CACHE%"'
 - set DEPS=cygport,libX11-devel,libXext-devel,libXpm-devel,libcrypt-devel,libcrypt0,libdb-devel,libgdbm-devel,libiconv-devel,libncurses-devel,libpcre-devel,libsigsegv-devel,mercurial
 - if "%BUILD%"=="i686-pc-cygwin" set DEPS="%DEPS%,ffcall,libdbus1-devel,libfcgi-devel,libgcrypt-devel,libglade2.0-devel,libpq-devel,libpq5,libsvm-devel,postgresql-devel"
-- echo Installing build dependencies
-- '%CACHE%\%SETUP% -qnNdO -R "%CYGWIN_ROOT%" -s "%CYGWIN_MIRROR%" -l "%CACHE%" -P "%DEPS%"'
+- echo Updating Cygwin and installing build dependencies
+- '%CACHE%\%SETUP% -gqnNdO -R "%CYGWIN_ROOT%" -s "%CYGWIN_MIRROR%" -l "%CACHE%" -P "%DEPS%"'
 - echo Install done
 cache:
 - C:\cache

@@ -1,22 +1,14 @@
 #!/bin/sh
-set -e
+exit_status=0
 
-echo fetching...
-cygport clisp.cygport fetch
+cygport clisp.cygport fetch prep compile || exit_status=1
 
-echo prepping...
-cygport clisp.cygport prep
-
-echo compiling...
-cygport clisp.cygport compile
-
-# echo installing...
-# cygport clisp.cygport inst
-
-# echo packaging...
-# cygport clisp.cygport pkg
-
-echo testing...
-cygport clisp.cygport test
+if [ $exit_status -eq 0 ]
+then
+    # cygport clisp.cygport inst pkg || exit_status=1
+    cygport clisp.cygport test || echo "Test(s) failed."
+fi
 
 tar -cJf artifact.tar.xz clisp-*/dist clisp-*/log
+
+exit $exit_status

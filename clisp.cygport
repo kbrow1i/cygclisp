@@ -51,12 +51,12 @@ bignums, and more.  An X11 interface is available through CLX, Garnet,
 CLUE/CLIO.  GNU CLISP runs Maxima, ACL2, and many other Common Lisp
 packages."
 clisp_CONTENTS="
---exclude=usr/lib/${PN}-${ORIG_PV}/dbus
---exclude=usr/lib/${PN}-${ORIG_PV}/clx
---exclude=usr/lib/${PN}-${ORIG_PV}/dynmod/*clx*
---exclude=usr/lib/${PN}-${ORIG_PV}/dynmod/*dbus*
---exclude=usr/lib/${PN}-${ORIG_PV}/dynmod/*gtk*
---exclude=usr/lib/${PN}-${ORIG_PV}/gtk2
+--exclude=usr/lib/${P}/dbus
+--exclude=usr/lib/${P}/clx
+--exclude=usr/lib/${P}/dynmod/*clx*
+--exclude=usr/lib/${P}/dynmod/*dbus*
+--exclude=usr/lib/${P}/dynmod/*gtk*
+--exclude=usr/lib/${P}/gtk2
 usr
 "
 
@@ -64,20 +64,22 @@ clisp_clx_CATEGORY="Interpreters"
 clisp_clx_SUMMARY="The new-clx module for clisp"
 clisp_clx_DESCRIPTION="This is the new-clx clisp module for X.Org."
 clisp_clx_REQUIRES="clisp"
-clisp_clx_CONTENTS="
-usr/lib/${PN}-${ORIG_PV}/clx
-usr/lib/${PN}-${ORIG_PV}/dynmod/*clx*
-"
+# clisp_clx_CONTENTS="
+# usr/lib/${PN}-${PV}/clx
+# usr/lib/${PN}-${PV}/dynmod/*clx*
+# "
+# clx is currently broken: https://sourceforge.net/p/clisp/mailman/clisp-devel/thread/8b7ee413-fa96-d0ef-004c-4079be6939c9%40cornell.edu/#msg35700257
+clisp_clx_CONTENTS=
 
 clisp_gtk2_CATEGORY="Interpreters"
 clisp_gtk2_SUMMARY="The GTK2 + dbus module for clisp"
 clisp_gtk2_DESCRIPTION="This is the gtk2 clisp module for X.Org, with dbus included."
 clisp_gtk2_REQUIRES="clisp"
 clisp_gtk2_CONTENTS="
-usr/lib/${PN}-${ORIG_PV}/gtk2
-usr/lib/${PN}-${ORIG_PV}/dbus
-usr/lib/${PN}-${ORIG_PV}/dynmod/*dbus*
-usr/lib/${PN}-${ORIG_PV}/dynmod/*gtk*
+usr/lib/${P}/gtk2
+usr/lib/${P}/dbus
+usr/lib/${P}/dynmod/*dbus*
+usr/lib/${P}/dynmod/*gtk*
 "
 MAKEOPTS+=" -j1"
 
@@ -105,19 +107,14 @@ DEPEND="
 	mercurial
 	postgresql-devel
 "
-# clx is currently broken: https://sourceforge.net/p/clisp/mailman/clisp-devel/thread/8b7ee413-fa96-d0ef-004c-4079be6939c9%40cornell.edu/#msg35700257
-# MODULES="rawsock dirkey berkeley-db pcre gdbm clx/new-clx"
-# CHECK_MODULES="rawsock dirkey pcre gdbm clx/new-clx"
 
-# MODULES="rawsock dirkey berkeley-db pcre gdbm bindings/win32 postgresql fastcgi zlib libsvm gtk2 dbus"
-MODULES="rawsock dirkey berkeley-db pcre gdbm bindings/win32 postgresql fastcgi zlib gtk2"
+MODULES="rawsock dirkey berkeley-db pcre gdbm bindings/win32 postgresql fastcgi zlib libsvm gtk2 dbus"
+
+# The test suite claims that win32 can't be found.  The testsuite for
+# libsvm takes hours to run, so we don't do it routinely.  I'm
+# temporarily not testing dbus so I can use AppVeyor, where I don't
+# think I can run tests under X.
 CHECK_MODULES="rawsock dirkey pcre gdbm berkeley-db postgresql fastcgi zlib gtk2"
-
-# The test suite claims that win32 can't be found.  The
-# testsuite for libsvm takes hours to run, so we don't do it
-# routinely.  I'm temporarily not testing dbus so I can use
-# AppVeyor, where I don't think I can run tests under X.
-# CHECK_MODULES+=" postgresql fastcgi zlib gtk2 dbus"
 
 WITHMODS="--with-modules=$(echo ${MODULES} | sed -e's, , --with-modules=,g')"
 CYGCONF_ARGS="${WITHMODS} --docdir=/usr/share/doc/${PN}"
@@ -136,7 +133,7 @@ src_compile() {
     verbose ./configure --prefix=/usr ${CYGCONF_ARGS} ${B} \
 	     || error "configure failed"
     cd ${B}
-    cygmake -k MODULES="${MODULES}"
+    cygmake MODULES="${MODULES}"
 }
 
 src_install() {
@@ -153,5 +150,5 @@ src_test() {
     # find . -name '*.dll' | rebase -OT -
     make -k check || true
     make -k base-mod-check || true
-    make -k full-mod-check MODULES="${CHECK_MODULES}" || true
+    make -k full-mod-check MODULES="${CHECK_MODULES}"
 }

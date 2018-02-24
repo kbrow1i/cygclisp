@@ -1,0 +1,23 @@
+--- origsrc/clisp-2.49.92/modules/clx/new-clx/Makefile.in	2017-05-21 15:12:40.000000000 -0400
++++ src/clisp-2.49.92/modules/clx/new-clx/Makefile.in	2018-02-24 15:18:08.764923500 -0500
+@@ -35,16 +35,18 @@ resource.fas: $(srcdir)/resource.lisp cl
+ 
+ clx.d: $(srcdir)/clx.f
+ 	$(CCMP2C) $(srcdir)/clx.f > genclx.c
+-	$(CC) $(CPPFLAGS) $(CFLAGS) $(WANTS) genclx.c -o genclx
++	sed -i '1s/^/#include <config.h>\n/' genclx.c
++	$(CC) $(CPPFLAGS) -I../.. $(CFLAGS) $(WANTS) genclx.c -o genclx
+ 	./genclx -l -o clx.d > clx.d
+ 	$(RM) genclx.c
+ 	$(RM) genclx
+ 
+ clx.c: clx.d
+ 	$(CLISP) -C $(CLISP_LINKKIT)/modprep clx.d clx.c
++	sed -i '1s/^/#include <config.h>\n/' clx.c
+ 
+ clx.o: clx.c
+-	$(CC) $(CPPFLAGS) $(CFLAGS) $(X_CFLAGS) -I$(CLISP_LINKKIT) -c clx.c
++	$(CC) $(CPPFLAGS) -I../.. $(CFLAGS) $(X_CFLAGS) -I$(CLISP_LINKKIT) -c clx.c
+ 
+ clx-preload.lisp : $(srcdir)/clx-preload.lisp
+ 	$(LN_S) $(srcdir)/clx-preload.lisp .

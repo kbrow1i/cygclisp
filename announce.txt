@@ -1,15 +1,15 @@
-From cygwin-announce-clisp-2.49-6.20150312hg15611 Sat Oct 15 15:16:18 2016
+From cygwin-announce-clisp-2.49.92-1 Sat Oct 15 15:16:18 2016
 From: Ken Brown <kbrown@cornell.edu>
 To: cygwin-announce@cygwin.com
 Date: Sat, 15 Oct 2016 15:16:18 -0400
-Subject: clisp 2.49-6.20150312hg15611 (x86 only)
+Subject: clisp 2.49.92-1 (TEST)
 
 The following packages have been uploaded to the 32-bit Cygwin
 distribution:
 
-* clisp-2.49-6.20150312hg15611
-* clisp-clx-2.49-6.20150312hg15611
-* clisp-gtk2-2.49-6.20150312hg15611
+* clisp-2.49.92-1
+* clisp-clx-2.49.92-1
+* clisp-gtk2-2.49.92-1
 
 ANSI Common Lisp is a high-level, general-purpose programming
 language.  GNU CLISP is a Common Lisp implementation by Bruno Haible
@@ -21,7 +21,12 @@ bignums, and more.  An X11 interface is available through CLX, Garnet,
 CLUE/CLIO.  GNU CLISP runs Maxima, ACL2, and many other Common Lisp
 packages.
 
-This is a rebuild for db-5.3 and gdbm-1.12.
+The 64-bit packages now support the same modules as the 32-bit
+packages since ffcall is now available on 64-bit Cygwin.
+
+This is a beta release of the forthcoming clisp-2.50.  There has been
+a lot of clisp development since the previous release, so this could
+use some testing.
 
 Ken Brown
 Cygwin's clisp maintainer

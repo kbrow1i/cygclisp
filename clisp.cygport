@@ -1,14 +1,9 @@
 NAME="clisp"
 VERSION=2.49.92
-RELEASE=1
+RELEASE=2
 HOMEPAGE="http://clisp.cons.org/"
 
-PKG_NAMES="${PN}"
-
-if [ "${ARCH}" = i686 ]
-then
-    PKG_NAMES+=" ${PN}-clx ${PN}-gtk2"
-fi
+PKG_NAMES="${PN} ${PN}-clx ${PN}-gtk2"
 
 SRC_URI="https://haible.de/bruno/gnu/${P}.tar.bz2"
 
@@ -69,40 +64,25 @@ clisp_CONTENTS="
 usr
 "
 
-if [ "${ARCH}" = i686 ]
-then
-    clisp_clx_CATEGORY="Interpreters"
-    clisp_clx_SUMMARY="The new-clx module for clisp"
-    clisp_clx_DESCRIPTION="This is the new-clx clisp module for X.Org."
-    clisp_clx_REQUIRES="clisp"
-    clisp_clx_CONTENTS="
+clisp_clx_CATEGORY="Interpreters"
+clisp_clx_SUMMARY="The new-clx module for clisp"
+clisp_clx_DESCRIPTION="This is the new-clx clisp module for X.Org."
+clisp_clx_REQUIRES="clisp"
+clisp_clx_CONTENTS="
 usr/lib/${P}/clx
 usr/lib/${P}/dynmod/*clx*
 "
 
-    clisp_gtk2_CATEGORY="Interpreters"
-    clisp_gtk2_SUMMARY="The GTK2 + dbus module for clisp"
-    clisp_gtk2_DESCRIPTION="This is the gtk2 clisp module for X.Org, with dbus included."
-    clisp_gtk2_REQUIRES="clisp"
-    clisp_gtk2_CONTENTS="
+clisp_gtk2_CATEGORY="Interpreters"
+clisp_gtk2_SUMMARY="The GTK2 + dbus module for clisp"
+clisp_gtk2_DESCRIPTION="This is the gtk2 clisp module for X.Org, with dbus included."
+clisp_gtk2_REQUIRES="clisp"
+clisp_gtk2_CONTENTS="
 usr/lib/${P}/gtk2
 usr/lib/${P}/dbus
 usr/lib/${P}/dynmod/*dbus*
 usr/lib/${P}/dynmod/*gtk*
 "
-fi
-
-if [ "${ARCH}" = x86_64 ]
-then
-    PKG_IGNORE="
-usr/lib/${P}/clx
-usr/lib/${P}/dynmod/*clx*
-usr/lib/${P}/gtk2
-usr/lib/${P}/dbus
-usr/lib/${P}/dynmod/*dbus*
-usr/lib/${P}/dynmod/*gtk*
-"
-fi
 
 MAKEOPTS+=" -j1"
 

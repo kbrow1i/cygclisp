@@ -1,15 +1,14 @@
-From cygwin-announce-clisp-2.49.92-1 Sat Oct 15 15:16:18 2016
+From cygwin-announce-clisp-2.49.92-1 Sat Feb 24 21:04:08 2018
 From: Ken Brown <kbrown@cornell.edu>
 To: cygwin-announce@cygwin.com
-Date: Sat, 15 Oct 2016 15:16:18 -0400
-Subject: clisp 2.49.92-1 (TEST)
+Date: Sat, 24 Feb 2018 21:04:08 -0500
+Subject: clisp 2.49.92-1
 
-The following packages have been uploaded to the 32-bit Cygwin
-distribution:
+The following packages have been uploaded to the Cygwin distribution:
 
 * clisp-2.49.92-1
-* clisp-clx-2.49.92-1
-* clisp-gtk2-2.49.92-1
+* clisp-clx-2.49.92-1 [1]
+* clisp-gtk2-2.49.92-1 [1]
 
 ANSI Common Lisp is a high-level, general-purpose programming
 language.  GNU CLISP is a Common Lisp implementation by Bruno Haible
@@ -30,3 +29,7 @@ use some testing.
 
 Ken Brown
 Cygwin's clisp maintainer
+
+[1] For technical reasons, I have so far uploaded clisp-clx and
+clisp-gtk only for 32-bit Cygwin.  If anyone wants to try the 64-bit
+versions, let me know, and I'll make them available.

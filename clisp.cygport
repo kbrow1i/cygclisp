@@ -107,7 +107,7 @@ DEPEND="
 	libpq5
 	libsigsegv-devel
 	libsvm-devel
-	mercurial
+	libunistring-devel
 	postgresql-devel
 "
 
